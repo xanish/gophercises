@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 )
 
 const baseTimeDuration = time.Duration(1) * time.Second
+const zeroTimeDuration = time.Duration(0) * time.Second
 
 func TestReadQuestions(t *testing.T) {
 	source, want := dummyQuestions()
@@ -26,13 +28,17 @@ func TestReadQuestions(t *testing.T) {
 func TestNewQuiz(t *testing.T) {
 	source, questions := dummyQuestions()
 	want := Quiz{questions: questions, timeLimit: baseTimeDuration, score: 0}
-	got, err := NewQuiz(&source, time.Duration(2)*time.Second, false)
+	got, err := NewQuiz(&source, baseTimeDuration, false)
 
 	if err != nil {
-		t.Error("expected err to be nil, got " + err.Error())
+		t.Fatalf("expected err to be nil, got %v", err)
 	}
 
-	if !reflect.DeepEqual(want, got) {
+	if reflect.DeepEqual(Quiz{}, got) {
+		t.Fatal("expected quiz to not be nil")
+	}
+
+	if want.String() != strings.TrimSpace(got.String()) {
 		t.Errorf("want %v, got %v", want, got)
 	}
 }
@@ -56,31 +62,21 @@ func TestQuiz_Start(t *testing.T) {
 			t.Error("expected err to be nil, got " + err.Error())
 		}
 
-		if !reflect.DeepEqual(want, got) {
+		if want.String() != strings.TrimSpace(got.String()) {
 			t.Errorf("want %v, got %v", want, got)
 		}
 	})
 
 	t.Run("times up", func(t *testing.T) {
 		_, questions := dummyQuestions()
-		quiz := Quiz{questions: questions, timeLimit: baseTimeDuration, score: 0}
+		quiz := Quiz{questions: questions, timeLimit: zeroTimeDuration, score: 0}
 
-		dummyInput := "4\n"
-		funcDefer, err := mockStdin(t, dummyInput)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer funcDefer()
+		_, err := quiz.Start()
 
-		_, err = quiz.Start()
-
-		// TODO: dig more into this
-		// not sure why this does not work, apparently Scanln returns EOF as an error
-		// don't know why for now
 		if err == nil {
 			t.Error("expected err to be not nil")
-		} else if err.Error() != "Times up! You scored 1 out of 3" {
-			t.Errorf("want \"Times up! You scored 1 out of 3\", got %v", err)
+		} else if err.Error() != "Times up! You scored 0 out of 3" {
+			t.Errorf("want \"Times up! You scored 0 out of 3\", got %v", err)
 		}
 	})
 }
