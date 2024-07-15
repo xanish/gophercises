@@ -1,3 +1,5 @@
+github.com/approvals/go-approval-tests v0.0.0-20240417152556-434b9105e958 h1:7/wXpCITDdUf5qOuxr8e9YwFEJIPkZZyD0Z3nvV1Zwc=
+github.com/approvals/go-approval-tests v0.0.0-20240417152556-434b9105e958/go.mod h1:PJOqSY8IofNv3heAD6k8E7EfFS6okiSS9bSAasaAUME=
 github.com/boltdb/bolt v1.3.1 h1:JQmyP4ZBrce+ZQu0dY660FMfatumYDLun9hBCUVIkF4=
 github.com/boltdb/bolt v1.3.1/go.mod h1:clJnj/oiGkjum5o1McbSZDSLxVThjynRyGBgiAx27Ps=
 golang.org/x/sys v0.21.0 h1:rF+pYz3DAGSQAxAu1CbC7catZg4ebC4UIeIhKxBZvws=

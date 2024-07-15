@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Choose Your Own Adventure</title>
+</head>
+<body>
+<h1>arc2</h1>
+<p>arc2-story</p>
+
+<ul><li><a href="/intro">go-to-intro</a></li></ul>
+
+</body>
+</html>
