@@ -51,7 +51,7 @@ func TestMapHandler(t *testing.T) {
 
 func TestYAMLHandler(t *testing.T) {
 	paths := `- path: /test
-  url: http://google.com`
+  url: https://google.com`
 	mapHandler, err := YAMLHandler([]byte(paths), http.HandlerFunc(fallbackHandler))
 	if err != nil {
 		t.Fatalf("could not create YAMLHandler %v", err)
@@ -86,7 +86,7 @@ func TestJSONHandler(t *testing.T) {
 	paths := `[
   {
     "path": "/test",
-    "url": "http://google.com"
+    "url": "https://google.com"
   }
 ]`
 	mapHandler, err := JSONHandler([]byte(paths), http.HandlerFunc(fallbackHandler))
