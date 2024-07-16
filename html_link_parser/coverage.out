@@ -1,0 +1,22 @@
+mode: set
+github.com/xanish/gophercises/html_link_parser/parser.go:14.41,16.16 2 1
+github.com/xanish/gophercises/html_link_parser/parser.go:16.16,18.3 1 0
+github.com/xanish/gophercises/html_link_parser/parser.go:20.2,23.33 3 1
+github.com/xanish/gophercises/html_link_parser/parser.go:23.33,25.3 1 1
+github.com/xanish/gophercises/html_link_parser/parser.go:27.2,27.19 1 1
+github.com/xanish/gophercises/html_link_parser/parser.go:30.53,32.55 1 1
+github.com/xanish/gophercises/html_link_parser/parser.go:32.55,34.3 1 1
+github.com/xanish/gophercises/html_link_parser/parser.go:38.2,39.72 2 1
+github.com/xanish/gophercises/html_link_parser/parser.go:39.72,41.3 1 1
+github.com/xanish/gophercises/html_link_parser/parser.go:43.2,43.18 1 1
+github.com/xanish/gophercises/html_link_parser/parser.go:46.36,51.33 2 1
+github.com/xanish/gophercises/html_link_parser/parser.go:51.33,52.25 1 1
+github.com/xanish/gophercises/html_link_parser/parser.go:52.25,54.9 2 1
+github.com/xanish/gophercises/html_link_parser/parser.go:59.2,61.13 2 1
+github.com/xanish/gophercises/html_link_parser/parser.go:64.46,66.32 1 1
+github.com/xanish/gophercises/html_link_parser/parser.go:66.32,68.3 1 1
+github.com/xanish/gophercises/html_link_parser/parser.go:72.2,72.35 1 1
+github.com/xanish/gophercises/html_link_parser/parser.go:72.35,74.3 1 1
+github.com/xanish/gophercises/html_link_parser/parser.go:78.2,79.72 2 1
+github.com/xanish/gophercises/html_link_parser/parser.go:79.72,81.3 1 1
+github.com/xanish/gophercises/html_link_parser/parser.go:83.2,83.13 1 1
