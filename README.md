@@ -11,4 +11,9 @@ Material can be found [here](https://courses.calhoun.io/courses/cor_gophercises)
 | 04 | HTML Link Parser                  | [here](./html_link_parser/README.md)        |
 | 05 | Sitemap Builder                   | [here](./sitemap_builder/README.md)         |
 | 06 | Hacker Rank Problem               | [here](./strings_and_bytes/README.md)       |
+| 07 | CLI Task Manager                  | [here](task_manager/README.md)        |
 
+## Checking Test Coverage
+
+- To generate report run `go test -coverprofile=".\PACKAGE_NAME\coverage.out" .\PACKAGE_NAME\`
+- To view coverage in pretty html format run `go tool cover -html=".\PACKAGE_NAME\coverage.out"`
