@@ -1,0 +1,22 @@
+mode: set
+github.com/xanish/gophercises/url_shortener/handler.go:22.88,23.82 1 1
+github.com/xanish/gophercises/url_shortener/handler.go:23.82,26.9 3 1
+github.com/xanish/gophercises/url_shortener/handler.go:26.9,28.4 1 1
+github.com/xanish/gophercises/url_shortener/handler.go:28.9,30.4 1 1
+github.com/xanish/gophercises/url_shortener/handler.go:50.79,53.16 3 1
+github.com/xanish/gophercises/url_shortener/handler.go:53.16,55.3 1 0
+github.com/xanish/gophercises/url_shortener/handler.go:57.2,59.46 2 1
+github.com/xanish/gophercises/url_shortener/handler.go:80.81,83.16 3 1
+github.com/xanish/gophercises/url_shortener/handler.go:83.16,85.3 1 0
+github.com/xanish/gophercises/url_shortener/handler.go:87.2,89.46 2 1
+github.com/xanish/gophercises/url_shortener/handler.go:97.75,98.65 1 1
+github.com/xanish/gophercises/url_shortener/handler.go:98.65,101.42 3 1
+github.com/xanish/gophercises/url_shortener/handler.go:101.42,104.20 3 1
+github.com/xanish/gophercises/url_shortener/handler.go:104.20,106.5 1 1
+github.com/xanish/gophercises/url_shortener/handler.go:107.4,107.14 1 1
+github.com/xanish/gophercises/url_shortener/handler.go:110.3,112.30 2 1
+github.com/xanish/gophercises/url_shortener/handler.go:112.30,114.4 1 1
+github.com/xanish/gophercises/url_shortener/handler.go:114.9,116.4 1 1
+github.com/xanish/gophercises/url_shortener/handler.go:120.88,122.44 2 1
+github.com/xanish/gophercises/url_shortener/handler.go:122.44,124.3 1 1
+github.com/xanish/gophercises/url_shortener/handler.go:126.2,126.19 1 1
