@@ -3,10 +3,28 @@ package task_manager
 import (
 	"github.com/boltdb/bolt"
 	"os"
+	"reflect"
 	"testing"
 )
 
 func TestNewTaskManager(t *testing.T) {
+	t.Run("should create new task manager", func(t *testing.T) {
+		dbPath := tempFile()
+
+		defer func(name string) {
+			_ = os.Remove(name)
+		}(dbPath)
+
+		tm, err := NewTaskManager(dbPath)
+		if err != nil {
+			t.Errorf("error creating task manager: %v", err)
+		}
+
+		if reflect.DeepEqual(tm, TaskManager{}) {
+			t.Errorf("task manager should not be empty")
+		}
+	})
+
 	t.Run("should add task", func(t *testing.T) {
 		_, tm := setupTaskManager(t)
 		_ = tm.Close()
@@ -53,6 +71,14 @@ func TestNewTaskManager(t *testing.T) {
 
 	t.Run("should return pending tasks", func(t *testing.T) {
 		_, tm := setupTaskManager(t)
+
+		task := NewTask("Title 2", []string{"Description"})
+		task.Status = StatusCompleted
+		err := tm.Add(task)
+		if err != nil {
+			t.Errorf("error adding task: %v", err)
+		}
+
 		pending, err := tm.Pending()
 		if err != nil {
 			t.Errorf("error fetching pending tasks: %v", err)

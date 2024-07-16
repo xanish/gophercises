@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/boltdb/bolt"
 	"os"
-	"path/filepath"
 	"time"
 )
 
@@ -21,8 +20,8 @@ type TaskManager struct {
 
 // NewTaskManager creates a new TaskManager instance by initializing
 // and opening a BoltDB database connection.
-func NewTaskManager() (TaskManager, error) {
-	db, dbCloser, err := setupDatabase()
+func NewTaskManager(dbPath string) (TaskManager, error) {
+	db, dbCloser, err := setupDatabase(dbPath)
 	if err != nil {
 		return TaskManager{}, err
 	}
@@ -151,9 +150,7 @@ func (tm *TaskManager) Close() error {
 // setupDatabase initializes and opens a BoltDB database connection.
 // It creates the default bucket if it doesn't exist. Returns the opened database,
 // a closure to close the database, and any encountered error.
-func setupDatabase() (*bolt.DB, func(db *bolt.DB) error, error) {
-	dbPath := filepath.Join(os.Getenv("DB_PATH"), "tasks.db")
-
+func setupDatabase(dbPath string) (*bolt.DB, func(db *bolt.DB) error, error) {
 	// Check if database file already exists
 	newlyCreated, err := createDatabase(dbPath)
 	if err != nil {
