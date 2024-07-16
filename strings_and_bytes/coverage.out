@@ -1,0 +1,16 @@
+mode: set
+github.com/xanish/gophercises/strings_and_bytes/caeser_cipher.go:3.53,6.36 2 1
+github.com/xanish/gophercises/strings_and_bytes/caeser_cipher.go:6.36,11.3 1 1
+github.com/xanish/gophercises/strings_and_bytes/caeser_cipher.go:13.2,13.31 1 1
+github.com/xanish/gophercises/strings_and_bytes/caeser_cipher.go:13.31,15.31 2 1
+github.com/xanish/gophercises/strings_and_bytes/caeser_cipher.go:15.31,17.4 1 1
+github.com/xanish/gophercises/strings_and_bytes/caeser_cipher.go:17.9,17.38 1 1
+github.com/xanish/gophercises/strings_and_bytes/caeser_cipher.go:17.38,19.4 1 1
+github.com/xanish/gophercises/strings_and_bytes/caeser_cipher.go:19.9,21.4 1 1
+github.com/xanish/gophercises/strings_and_bytes/caeser_cipher.go:24.2,24.23 1 1
+github.com/xanish/gophercises/strings_and_bytes/camel_case.go:7.34,10.35 2 1
+github.com/xanish/gophercises/strings_and_bytes/camel_case.go:10.35,12.3 1 1
+github.com/xanish/gophercises/strings_and_bytes/camel_case.go:14.2,14.28 1 1
+github.com/xanish/gophercises/strings_and_bytes/camel_case.go:14.28,16.43 2 1
+github.com/xanish/gophercises/strings_and_bytes/camel_case.go:16.43,18.4 1 1
+github.com/xanish/gophercises/strings_and_bytes/camel_case.go:21.2,21.18 1 1
