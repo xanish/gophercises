@@ -1,0 +1,25 @@
+mode: set
+github.com/xanish/gophercises/quiz_game/quiz.go:15.35,17.2 1 1
+github.com/xanish/gophercises/quiz_game/quiz.go:25.37,41.12 3 1
+github.com/xanish/gophercises/quiz_game/quiz.go:41.12,43.40 2 1
+github.com/xanish/gophercises/quiz_game/quiz.go:43.40,47.18 3 1
+github.com/xanish/gophercises/quiz_game/quiz.go:47.18,49.5 1 1
+github.com/xanish/gophercises/quiz_game/quiz.go:51.4,51.86 1 1
+github.com/xanish/gophercises/quiz_game/quiz.go:51.86,53.5 1 1
+github.com/xanish/gophercises/quiz_game/quiz.go:56.3,56.18 1 1
+github.com/xanish/gophercises/quiz_game/quiz.go:60.2,60.9 1 1
+github.com/xanish/gophercises/quiz_game/quiz.go:61.33,62.55 1 1
+github.com/xanish/gophercises/quiz_game/quiz.go:63.26,64.21 1 0
+github.com/xanish/gophercises/quiz_game/quiz.go:65.20,66.16 1 1
+github.com/xanish/gophercises/quiz_game/quiz.go:70.31,72.2 1 1
+github.com/xanish/gophercises/quiz_game/quiz_game.go:11.58,14.16 3 1
+github.com/xanish/gophercises/quiz_game/quiz_game.go:14.16,16.3 1 0
+github.com/xanish/gophercises/quiz_game/quiz_game.go:18.2,19.33 2 1
+github.com/xanish/gophercises/quiz_game/quiz_game.go:19.33,24.3 1 1
+github.com/xanish/gophercises/quiz_game/quiz_game.go:26.2,26.23 1 1
+github.com/xanish/gophercises/quiz_game/quiz_game.go:29.91,31.16 2 1
+github.com/xanish/gophercises/quiz_game/quiz_game.go:31.16,33.3 1 0
+github.com/xanish/gophercises/quiz_game/quiz_game.go:35.2,35.19 1 1
+github.com/xanish/gophercises/quiz_game/quiz_game.go:35.19,36.47 1 0
+github.com/xanish/gophercises/quiz_game/quiz_game.go:36.47,36.106 1 0
+github.com/xanish/gophercises/quiz_game/quiz_game.go:39.2,41.18 2 1
