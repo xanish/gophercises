@@ -1,4 +1,4 @@
-package phone_number_normalizer
+package normalize
 
 import "regexp"
 
