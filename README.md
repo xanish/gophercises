@@ -12,6 +12,8 @@ Material can be found [here](https://courses.calhoun.io/courses/cor_gophercises)
 | 05 | Sitemap Builder                   | [here](./sitemap_builder/README.md)         |
 | 06 | Hacker Rank Problem               | [here](./strings_and_bytes/README.md)       |
 | 07 | CLI Task Manager                  | [here](./cli_task_manager/README.md)        |
+| 08 | Phone Number Normalizer           | [here](./phone_number_normalizer/README.md) |
+
 
 ## Checking Test Coverage
 
