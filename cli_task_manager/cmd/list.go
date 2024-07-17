@@ -1,12 +1,13 @@
 package cmd
 
 import (
-	"fmt"
-	"github.com/xanish/gophercises/cli_task_manager/task_manager"
 	"log"
+	"time"
 
+	"github.com/rodaine/table"
 	"github.com/spf13/cobra"
 	"github.com/xanish/gophercises/cli_task_manager/task"
+	"github.com/xanish/gophercises/cli_task_manager/task_manager"
 )
 
 var pending bool
@@ -46,9 +47,11 @@ Usage:
 			log.Fatal(err)
 		}
 
+		tbl := table.New("#", "Title", "Status", "Created At")
 		for _, task := range tasks {
-			fmt.Println(task)
+			tbl.AddRow(task.Id, task.Title, task.Status, task.CreatedAt.Format(time.DateTime))
 		}
+		tbl.Print()
 	},
 }
 
