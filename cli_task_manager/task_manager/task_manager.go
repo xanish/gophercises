@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/boltdb/bolt"
-	"github.com/xanish/gophercises/task_manager/task"
+	"github.com/xanish/gophercises/cli_task_manager/task"
 	"os"
 	"time"
 )

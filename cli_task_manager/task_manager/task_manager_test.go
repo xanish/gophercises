@@ -2,7 +2,7 @@ package task_manager
 
 import (
 	"github.com/boltdb/bolt"
-	"github.com/xanish/gophercises/task_manager/task"
+	"github.com/xanish/gophercises/cli_task_manager/task"
 	"os"
 	"reflect"
 	"testing"
