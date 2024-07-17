@@ -19,7 +19,7 @@ func TestNewTaskManager(t *testing.T) {
 
 	tm, err := NewTaskManager(dbPath)
 	if err != nil {
-		t.Errorf("error creating task manager: %v", err)
+		t.Errorf("failed to create task manager: %v", err)
 	}
 
 	if reflect.DeepEqual(tm, TaskManager{}) {

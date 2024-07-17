@@ -10,8 +10,10 @@ import (
 	"github.com/xanish/gophercises/cli_task_manager/task"
 )
 
-// Default database bucket name used for storing tasks.
-const defaultDatabaseBucket = "taskManager"
+const (
+	DefaultDatabaseFilePath = "./cli_task_manager/tasks.db"
+	defaultDatabaseBucket   = "taskManager"
+)
 
 // TaskManager manages tasks by persisting them in a BoltDB database.
 type TaskManager struct {
