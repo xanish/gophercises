@@ -1,113 +1,148 @@
 package task_manager
 
 import (
-	"github.com/boltdb/bolt"
-	"github.com/xanish/gophercises/cli_task_manager/task"
 	"os"
 	"reflect"
+	"strconv"
 	"testing"
+
+	"github.com/boltdb/bolt"
+	"github.com/xanish/gophercises/cli_task_manager/task"
 )
 
 func TestNewTaskManager(t *testing.T) {
-	t.Run("should create new task manager", func(t *testing.T) {
-		dbPath := tempFile()
+	dbPath := tempFile()
 
-		defer func(name string) {
-			_ = os.Remove(name)
-		}(dbPath)
+	defer func(name string) {
+		_ = os.Remove(name)
+	}(dbPath)
 
-		tm, err := NewTaskManager(dbPath)
-		if err != nil {
-			t.Errorf("error creating task manager: %v", err)
-		}
+	tm, err := NewTaskManager(dbPath)
+	if err != nil {
+		t.Errorf("error creating task manager: %v", err)
+	}
 
-		if reflect.DeepEqual(tm, TaskManager{}) {
-			t.Errorf("task manager should not be empty")
-		}
-	})
+	if reflect.DeepEqual(tm, TaskManager{}) {
+		t.Errorf("task manager should not be empty")
+	}
+}
 
+func TestTaskManager_Functions(t *testing.T) {
 	t.Run("should add task", func(t *testing.T) {
-		_, tm := setupTaskManager(t)
+		tm := setupTestTaskManagerWithDummyTasks(t)
 		_ = tm.Close()
 	})
 
 	t.Run("should delete task", func(t *testing.T) {
-		tsk, tm := setupTaskManager(t)
-		err := tm.Delete(tsk)
-		if err != nil {
-			t.Errorf("error deleting task: %v", err)
-		}
+		tm := setupTestTaskManagerWithDummyTasks(t)
+
+		taskId := 1
+		assertNoError(t, tm.Delete(taskId))
 
 		_ = tm.Close()
 	})
 
-	t.Run("should mark task as completed and verify before and after update", func(t *testing.T) {
-		tsk, tm := setupTaskManager(t)
+	t.Run("should fetch all tasks", func(t *testing.T) {
+		tm := setupTestTaskManagerWithDummyTasks(t)
+		tasks, err := tm.List("")
 
-		completed, err := tm.Completed()
-		if err != nil {
-			t.Errorf("error fetching completed tasks: %v", err)
-		}
-
-		if len(completed) != 0 {
-			t.Errorf("expected completed tasks to be 0, got %v", len(completed))
-		}
-
-		err = tm.Complete(tsk)
-		if err != nil {
-			t.Errorf("error marking task as completed: %v", err)
-		}
-
-		completed, err = tm.Completed()
-		if err != nil {
-			t.Errorf("error fetching completed tasks: %v", err)
-		}
-
-		if len(completed) != 1 {
-			t.Errorf("expected completed tasks to be 1, got %v", len(completed))
-		}
-
+		assertNoError(t, err)
+		assertTasksLength(t, tasks, 5)
 		_ = tm.Close()
 	})
 
-	t.Run("should return pending tasks", func(t *testing.T) {
-		_, tm := setupTaskManager(t)
+	t.Run("should fetch pending tasks", func(t *testing.T) {
+		tm := setupTestTaskManagerWithDummyTasks(t)
+		tasks, err := tm.List(task.StatusPending)
 
-		tsk := task.NewTask("Title 2", []string{"Description"})
-		tsk.Status = task.StatusCompleted
-		err := tm.Add(tsk)
-		if err != nil {
-			t.Errorf("error adding task: %v", err)
-		}
+		assertNoError(t, err)
+		assertTasksLength(t, tasks, 3)
+		_ = tm.Close()
+	})
 
-		pending, err := tm.Pending()
-		if err != nil {
-			t.Errorf("error fetching pending tasks: %v", err)
-		}
+	t.Run("should fetch completed tasks", func(t *testing.T) {
+		tm := setupTestTaskManagerWithDummyTasks(t)
+		tasks, err := tm.List(task.StatusCompleted)
 
-		if len(pending) != 1 {
-			t.Errorf("expected pending tasks to be 1, got %v", len(pending))
-		}
+		assertNoError(t, err)
+		assertTasksLength(t, tasks, 2)
+		_ = tm.Close()
+	})
+
+	t.Run("should mark task as completed and verify count before and after update", func(t *testing.T) {
+		tm := setupTestTaskManagerWithDummyTasks(t)
+		pending, err := tm.List(task.StatusPending)
+		completed, err := tm.List(task.StatusCompleted)
+
+		assertNoError(t, err)
+		assertTasksLength(t, pending, 3)
+		assertTasksLength(t, completed, 2)
+
+		err = tm.Complete(pending[0].Id)
+		assertNoError(t, err)
+
+		pending, err = tm.List(task.StatusPending)
+		completed, err = tm.List(task.StatusCompleted)
+		assertNoError(t, err)
+		assertTasksLength(t, pending, 2)
+		assertTasksLength(t, completed, 3)
 
 		_ = tm.Close()
 	})
 }
 
-func setupTaskManager(t *testing.T) (task.Task, *TaskManager) {
-	db, closer := setupTempDatabase(t)
-
-	tm := TaskManager{database: db, closer: closer}
-	tsk := task.NewTask("Task 1", []string{"Description Line 1", "Description Line 2"})
-
-	err := tm.Add(tsk)
+func assertNoError(t *testing.T, err error) {
+	t.Helper()
 	if err != nil {
-		t.Errorf("error adding task: %v", err)
+		t.Errorf("expected err to be nil got: %v", err)
+	}
+}
+
+func assertTasksLength(t *testing.T, tasks []task.Task, length int) {
+	t.Helper()
+	if len(tasks) != length {
+		t.Errorf("expected %d task, got %v tasks", length, len(tasks))
+	}
+}
+
+func setupTestTaskManagerWithDummyTasks(t *testing.T) *TaskManager {
+	t.Helper()
+	tm := setupTestTaskManager(t)
+
+	for i := 1; i < 4; i++ {
+		err := tm.Add(dummyTask(i, task.StatusPending))
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
 	}
 
-	return tsk, &tm
+	for i := 1; i < 3; i++ {
+		err := tm.Add(dummyTask(i, task.StatusCompleted))
+		if err != nil {
+			t.Errorf("expected no error, got %v", err)
+		}
+	}
+
+	return tm
 }
 
-func setupTempDatabase(t *testing.T) (*bolt.DB, func(db *bolt.DB) error) {
+func dummyTask(id int, status string) task.Task {
+	return task.Task{
+		Id:          id,
+		Title:       "Dummy Task " + strconv.Itoa(id),
+		Description: []string{"Description Line 1", "Description Line 2"},
+		Status:      status,
+	}
+}
+
+func setupTestTaskManager(t *testing.T) *TaskManager {
+	db, closer := initTempDatabase(t)
+
+	return &TaskManager{db: db, closer: closer}
+}
+
+func initTempDatabase(t *testing.T) (*bolt.DB, func(db *bolt.DB) error) {
+	t.Helper()
 	db, err := bolt.Open(tempFile(), 0600, nil)
 	if err != nil {
 		t.Fatal(err)
