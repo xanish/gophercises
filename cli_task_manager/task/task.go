@@ -4,7 +4,6 @@ package task
 
 import (
 	"encoding/json"
-	"strings"
 	"time"
 )
 
@@ -16,6 +15,7 @@ const (
 // Task represents a single task with its title, description, status,
 // and creation timestamp.
 type Task struct {
+	Id          int       `json:"Id"`
 	Title       string    `json:"Title"`
 	Description []string  `json:"Description"`
 	Status      string    `json:"Status"`
@@ -45,12 +45,6 @@ func NewTaskFromJSON(bytes []byte) (Task, error) {
 	}
 
 	return task, err
-}
-
-// Id generates a unique identifier for the Task based on its creation timestamp
-// and title (formatted with underscores instead of spaces for consistency).
-func (t Task) Id() string {
-	return t.CreatedAt.Format(strings.ReplaceAll(time.DateTime, " ", "_")) + "_" + strings.ReplaceAll(t.Title, " ", "_")
 }
 
 // JSON marshals the Task object into a JSON byte slice.

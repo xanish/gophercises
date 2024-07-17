@@ -55,8 +55,8 @@ func TestNewTaskFromJSON(t *testing.T) {
 	})
 
 	t.Run("returns proper task id", func(t *testing.T) {
-		if got.Id() != want.Id() {
-			t.Errorf("want id %s, got %s", want.Id(), got.Id())
+		if got.Id != want.Id {
+			t.Errorf("want id %d, got %d", want.Id, got.Id)
 		}
 	})
 
