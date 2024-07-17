@@ -11,7 +11,7 @@ Material can be found [here](https://courses.calhoun.io/courses/cor_gophercises)
 | 04 | HTML Link Parser                  | [here](./html_link_parser/README.md)        |
 | 05 | Sitemap Builder                   | [here](./sitemap_builder/README.md)         |
 | 06 | Hacker Rank Problem               | [here](./strings_and_bytes/README.md)       |
-| 07 | CLI Task Manager                  | [here](task_manager/README.md)        |
+| 07 | CLI Task Manager                  | [here](./cli_task_manager/README.md)        |
 
 ## Checking Test Coverage
 
