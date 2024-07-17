@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/boltdb/bolt"
+	"github.com/xanish/gophercises/task_manager/task"
 	"os"
 	"time"
 )
@@ -30,7 +31,7 @@ func NewTaskManager(dbPath string) (TaskManager, error) {
 }
 
 // Add persists a new Task to the database.
-func (tm *TaskManager) Add(t Task) error {
+func (tm *TaskManager) Add(t task.Task) error {
 	err := tm.database.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(defaultDatabaseBucket))
 
@@ -57,15 +58,15 @@ func (tm *TaskManager) Add(t Task) error {
 // Complete marks a Task as completed in the database.
 // It updates the Task's status to "StatusCompleted" and then calls the Add function
 // to persist the updated Task in the database.
-func (tm *TaskManager) Complete(t Task) error {
-	t.Status = StatusCompleted
+func (tm *TaskManager) Complete(t task.Task) error {
+	t.Status = task.StatusCompleted
 
 	return tm.Add(t)
 }
 
 // Delete removes a Task from the database.
 // It attempts to delete the key corresponding to the Task's ID from the default bucket.
-func (tm *TaskManager) Delete(t Task) error {
+func (tm *TaskManager) Delete(t task.Task) error {
 	err := tm.database.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(defaultDatabaseBucket))
 
@@ -85,18 +86,18 @@ func (tm *TaskManager) Delete(t Task) error {
 }
 
 // Pending retrieves a list of tasks with a "StatusPending" status from the database.
-func (tm *TaskManager) Pending() ([]Task, error) {
-	tasks := make([]Task, 0)
+func (tm *TaskManager) Pending() ([]task.Task, error) {
+	tasks := make([]task.Task, 0)
 	err := tm.database.View(func(tx *bolt.Tx) error {
 		cursor := tx.Bucket([]byte(defaultDatabaseBucket)).Cursor()
 		prefix := []byte(time.Now().Format(time.DateOnly))
 
 		for k, v := cursor.Seek(prefix); k != nil && bytes.HasPrefix(k, prefix); k, v = cursor.Next() {
-			data, e := NewTaskFromJSON(v)
+			data, e := task.NewTaskFromJSON(v)
 			if e != nil {
 				return fmt.Errorf("failed to fetch tasks %w", e)
 			}
-			if data.Status != StatusPending {
+			if data.Status != task.StatusPending {
 				continue
 			}
 
@@ -114,18 +115,18 @@ func (tm *TaskManager) Pending() ([]Task, error) {
 }
 
 // Completed retrieves a list of tasks with a "StatusCompleted" status from the database.
-func (tm *TaskManager) Completed() ([]Task, error) {
-	tasks := make([]Task, 0)
+func (tm *TaskManager) Completed() ([]task.Task, error) {
+	tasks := make([]task.Task, 0)
 	err := tm.database.View(func(tx *bolt.Tx) error {
 		cursor := tx.Bucket([]byte(defaultDatabaseBucket)).Cursor()
 		prefix := []byte(time.Now().Format(time.DateOnly))
 
 		for k, v := cursor.Seek(prefix); k != nil && bytes.HasPrefix(k, prefix); k, v = cursor.Next() {
-			data, e := NewTaskFromJSON(v)
+			data, e := task.NewTaskFromJSON(v)
 			if e != nil {
 				return fmt.Errorf("failed to fetch tasks %w", e)
 			}
-			if data.Status != StatusCompleted {
+			if data.Status != task.StatusCompleted {
 				continue
 			}
 

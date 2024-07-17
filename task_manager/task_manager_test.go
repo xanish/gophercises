@@ -2,6 +2,7 @@ package task_manager
 
 import (
 	"github.com/boltdb/bolt"
+	"github.com/xanish/gophercises/task_manager/task"
 	"os"
 	"reflect"
 	"testing"
@@ -31,8 +32,8 @@ func TestNewTaskManager(t *testing.T) {
 	})
 
 	t.Run("should delete task", func(t *testing.T) {
-		task, tm := setupTaskManager(t)
-		err := tm.Delete(task)
+		tsk, tm := setupTaskManager(t)
+		err := tm.Delete(tsk)
 		if err != nil {
 			t.Errorf("error deleting task: %v", err)
 		}
@@ -41,7 +42,7 @@ func TestNewTaskManager(t *testing.T) {
 	})
 
 	t.Run("should mark task as completed and verify before and after update", func(t *testing.T) {
-		task, tm := setupTaskManager(t)
+		tsk, tm := setupTaskManager(t)
 
 		completed, err := tm.Completed()
 		if err != nil {
@@ -52,7 +53,7 @@ func TestNewTaskManager(t *testing.T) {
 			t.Errorf("expected completed tasks to be 0, got %v", len(completed))
 		}
 
-		err = tm.Complete(task)
+		err = tm.Complete(tsk)
 		if err != nil {
 			t.Errorf("error marking task as completed: %v", err)
 		}
@@ -72,9 +73,9 @@ func TestNewTaskManager(t *testing.T) {
 	t.Run("should return pending tasks", func(t *testing.T) {
 		_, tm := setupTaskManager(t)
 
-		task := NewTask("Title 2", []string{"Description"})
-		task.Status = StatusCompleted
-		err := tm.Add(task)
+		tsk := task.NewTask("Title 2", []string{"Description"})
+		tsk.Status = task.StatusCompleted
+		err := tm.Add(tsk)
 		if err != nil {
 			t.Errorf("error adding task: %v", err)
 		}
@@ -92,18 +93,18 @@ func TestNewTaskManager(t *testing.T) {
 	})
 }
 
-func setupTaskManager(t *testing.T) (Task, *TaskManager) {
+func setupTaskManager(t *testing.T) (task.Task, *TaskManager) {
 	db, closer := setupTempDatabase(t)
 
 	tm := TaskManager{database: db, closer: closer}
-	task := NewTask("Task 1", []string{"Description Line 1", "Description Line 2"})
+	tsk := task.NewTask("Task 1", []string{"Description Line 1", "Description Line 2"})
 
-	err := tm.Add(task)
+	err := tm.Add(tsk)
 	if err != nil {
 		t.Errorf("error adding task: %v", err)
 	}
 
-	return task, &tm
+	return tsk, &tm
 }
 
 func setupTempDatabase(t *testing.T) (*bolt.DB, func(db *bolt.DB) error) {

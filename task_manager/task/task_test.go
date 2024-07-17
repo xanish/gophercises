@@ -1,4 +1,4 @@
-package task_manager
+package task
 
 import (
 	"github.com/google/go-cmp/cmp"

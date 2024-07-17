@@ -1,6 +1,6 @@
 // Package task_manager provides a simple task management data structure
 // and helper functions for creating and working with tasks.
-package task_manager
+package task
 
 import (
 	"encoding/json"
