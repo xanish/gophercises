@@ -1,17 +1,16 @@
 package blackjack
 
 import (
-	"github.com/xanish/gophercises/deck_of_cards"
 	"strings"
+
+	"github.com/xanish/gophercises/deck_of_cards"
 )
 
-type PlayerHand struct {
+type Hand struct {
 	Cards []deck_of_cards.Card
 }
 
-type DealerHand PlayerHand
-
-func (h PlayerHand) Score() int {
+func (h Hand) Score() int {
 	minScore := h.MinScore()
 	if minScore > 11 {
 		return minScore
@@ -28,7 +27,7 @@ func (h PlayerHand) Score() int {
 	return minScore
 }
 
-func (h PlayerHand) MinScore() int {
+func (h Hand) MinScore() int {
 	score := 0
 	for _, c := range h.Cards {
 		score += min(int(c.Rank), 10)
@@ -36,14 +35,7 @@ func (h PlayerHand) MinScore() int {
 	return score
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-func (h PlayerHand) String() string {
+func (h Hand) String() string {
 	var cards []string
 	for _, card := range h.Cards {
 		cards = append(cards, card.String())
@@ -52,11 +44,11 @@ func (h PlayerHand) String() string {
 	return strings.Join(cards, ", ")
 }
 
-func (h DealerHand) String() string {
+func (h Hand) DealerString() string {
 	var cards []string
 	for i, card := range h.Cards {
 		if i > 0 {
-			cards = append(cards, "Hidden")
+			cards = append(cards, "**Hidden**")
 		} else {
 			cards = append(cards, card.String())
 		}
