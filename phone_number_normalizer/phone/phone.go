@@ -1,7 +1,7 @@
 package phone
 
 type Phone struct {
-	contacts *Contacts
+	Contacts *Contacts
 }
 
 func NewPhone(driverName, dataSource string) (*Phone, error) {
@@ -10,5 +10,5 @@ func NewPhone(driverName, dataSource string) (*Phone, error) {
 		return nil, err
 	}
 
-	return &Phone{contacts: contacts}, nil
+	return &Phone{Contacts: contacts}, nil
 }
