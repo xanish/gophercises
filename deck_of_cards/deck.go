@@ -29,6 +29,16 @@ func NewDeck(opts ...func([]Card) []Card) Deck {
 	return Deck{cards: cards}
 }
 
+func (d *Deck) Draw() (Card, error) {
+	if len(d.cards) == 0 {
+		return Card{}, fmt.Errorf("no more cards to draw from")
+	}
+
+	top, rest := d.cards[0], d.cards[1:]
+	d.cards = rest
+	return top, nil
+}
+
 func (d *Deck) String() string {
 	cards := strings.Builder{}
 	for _, card := range d.cards {
