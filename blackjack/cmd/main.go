@@ -49,7 +49,31 @@ func main() {
 		}
 	}
 
+	// If dealer score <= 16, we hit
+	// If dealer has a soft 17, then we hit.
+	for blackjack.PlayerHand(dealer).Score() <= 16 || (blackjack.PlayerHand(dealer).Score() == 17 && blackjack.PlayerHand(dealer).MinScore() != 17) {
+		pick, err := deck.Draw()
+		if err != nil {
+			panic(err)
+		}
+
+		dealer.Cards = append(dealer.Cards, pick)
+	}
+
+	pScore, dScore := player.Score(), blackjack.PlayerHand(dealer).Score()
 	fmt.Println("Final hands")
-	fmt.Println(player)
-	fmt.Println(blackjack.PlayerHand(dealer))
+	fmt.Printf("Player hand: %s, Score: %d\n", player, pScore)
+	fmt.Printf("Dealer hand: %s, Score: %d\n", blackjack.PlayerHand(dealer), dScore)
+	switch {
+	case pScore > 21:
+		fmt.Println("You busted")
+	case dScore > 21:
+		fmt.Println("Dealer busted")
+	case pScore > dScore:
+		fmt.Println("You win!")
+	case dScore > pScore:
+		fmt.Println("You lose")
+	case dScore == pScore:
+		fmt.Println("Draw")
+	}
 }
