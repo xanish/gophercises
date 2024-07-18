@@ -13,7 +13,7 @@ Material can be found [here](https://courses.calhoun.io/courses/cor_gophercises)
 | 06 | Hacker Rank Problem               | [here](./strings_and_bytes/README.md)       |
 | 07 | CLI Task Manager                  | [here](./cli_task_manager/README.md)        |
 | 08 | Phone Number Normalizer           | [here](./phone_number_normalizer/README.md) |
-
+| 09 | Deck of Cards                     | [here](./deck_of_cards/README.md)           |
 
 ## Checking Test Coverage
 
