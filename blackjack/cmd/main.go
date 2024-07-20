@@ -2,70 +2,45 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/xanish/gophercises/blackjack"
-	"github.com/xanish/gophercises/deck_of_cards"
 )
 
 func main() {
-	deck := deck_of_cards.NewDeck(deck_of_cards.Packs(3), deck_of_cards.Shuffle)
-	var player blackjack.Hand
-	var dealer blackjack.Hand
+	gs := blackjack.NewGameState()
 
-	for i := 0; i < 2; i++ {
-		for _, hand := range []*blackjack.Hand{&player, &dealer} {
-			pick, err := deck.Draw()
-			if err != nil {
-				panic(err)
+	for round := 1; round <= 10; round++ {
+		fmt.Printf("Round %d:\n", round)
+
+		gs = blackjack.Deal(gs)
+
+		var input string
+		for gs.State == blackjack.StatePlayerTurn {
+			fmt.Println()
+			fmt.Printf("Player hand: %s\n", gs.Player)
+			fmt.Printf("Dealer hand: %s\n", gs.Dealer.DealerString())
+			fmt.Print("\nWhat would you like to do? (h)it or (s)tand... ")
+			_, _ = fmt.Scanln(&input)
+
+			switch input {
+			case "h":
+				gs = blackjack.Hit(gs)
+			case "s":
+				gs = blackjack.Stand(gs)
+			default:
+				fmt.Printf("Invalid choice: %s\n", input)
 			}
-
-			hand.Cards = append(hand.Cards, pick)
 		}
-	}
 
-	var input string
-	for input != "s" {
-		fmt.Printf("Player hand: %s\n", player)
-		fmt.Printf("Dealer hand: %s\n", dealer)
-		fmt.Print("\nWhat would you like to do? (h)it or (s)tand... ")
-		_, _ = fmt.Scanln(&input)
-
-		switch input {
-		case "h":
-			pick, err := deck.Draw()
-			if err != nil {
-				panic(err)
+		for gs.State == blackjack.StatePlayerTurn {
+			// If dealer score <= 16, we hit
+			// If dealer has a soft 17, then we hit.
+			if gs.Dealer.Score() <= 16 || (gs.Dealer.Score() == 17 && gs.Dealer.MinScore() != 17) {
+				gs = blackjack.Hit(gs)
+			} else {
+				gs = blackjack.Stand(gs)
 			}
-
-			player.Cards = append(player.Cards, pick)
-		}
-	}
-
-	// If dealer score <= 16, we hit
-	// If dealer has a soft 17, then we hit.
-	for dealer.Score() <= 16 || (dealer.Score() == 17 && dealer.MinScore() != 17) {
-		pick, err := deck.Draw()
-		if err != nil {
-			panic(err)
 		}
 
-		dealer.Cards = append(dealer.Cards, pick)
-	}
-
-	pScore, dScore := player.Score(), dealer.Score()
-	fmt.Println("\nFinal hands")
-	fmt.Printf("Player hand: %s, Score: %d\n", player, pScore)
-	fmt.Printf("Dealer hand: %s, Score: %d\n", dealer, dScore)
-	switch {
-	case pScore > 21:
-		fmt.Println("You busted")
-	case dScore > 21:
-		fmt.Println("Dealer busted")
-	case pScore > dScore:
-		fmt.Println("You win!")
-	case dScore > pScore:
-		fmt.Println("You lose")
-	case dScore == pScore:
-		fmt.Println("Draw")
+		gs = blackjack.End(gs)
 	}
 }
