@@ -24,7 +24,7 @@ func (g *Game) String() string {
 	return fmt.Sprintf("current deck size: %d\n state: %v\n player hand: %s\n dealer hand: %s\n", g.Deck.RemainingCards(), g.State, g.Player, g.Dealer)
 }
 
-func (g *Game) CurrentPlayer() *Hand {
+func (g *Game) currentPlayer() *Hand {
 	switch g.State {
 	case StatePlayerTurn:
 		return &g.Player
@@ -73,7 +73,7 @@ func Hit(g *Game) {
 		panic(err)
 	}
 
-	player := g.CurrentPlayer()
+	player := g.currentPlayer()
 	player.cards = append(player.cards, pick)
 
 	if player.Score() > 21 {
