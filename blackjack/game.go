@@ -55,54 +55,41 @@ func Draw(hand *Hand, deck *deck_of_cards.Deck) *Hand {
 	return hand
 }
 
-func Deal(g Game) Game {
-	ret := clone(g)
-
-	ret.Player.cards = make([]deck_of_cards.Card, 0, 2)
-	ret.Dealer.cards = make([]deck_of_cards.Card, 0, 2)
+func Deal(g *Game) {
+	g.Player.cards = make([]deck_of_cards.Card, 0, 2)
+	g.Dealer.cards = make([]deck_of_cards.Card, 0, 2)
 
 	for i := 0; i < 2; i++ {
-		Draw(&ret.Player, &ret.Deck)
-		Draw(&ret.Dealer, &ret.Deck)
+		Draw(&g.Player, &g.Deck)
+		Draw(&g.Dealer, &g.Deck)
 	}
 
-	ret.State = StatePlayerTurn
-
-	return ret
+	g.State = StatePlayerTurn
 }
 
-func Hit(g Game) Game {
-	ret := clone(g)
-
-	pick, err := ret.Deck.Draw()
+func Hit(g *Game) {
+	pick, err := g.Deck.Draw()
 	if err != nil {
 		panic(err)
 	}
 
-	player := ret.CurrentPlayer()
+	player := g.CurrentPlayer()
 	player.cards = append(player.cards, pick)
 
 	if player.Score() > 21 {
-		return Stand(ret)
+		Stand(g)
 	}
-
-	return ret
 }
 
-func Stand(g Game) Game {
-	ret := clone(g)
-	ret.State++
-
-	return ret
+func Stand(g *Game) {
+	g.State++
 }
 
-func End(g Game) Game {
-	ret := clone(g)
-
-	pScore, dScore := ret.Player.Score(), ret.Dealer.Score()
+func End(g *Game) {
+	pScore, dScore := g.Player.Score(), g.Dealer.Score()
 	fmt.Println("\nFinal hands:")
-	fmt.Printf("Player hand: %s (Score: %d)\n", ret.Player, pScore)
-	fmt.Printf("Dealer hand: %s (Score: %d)\n\n", ret.Dealer, dScore)
+	fmt.Printf("Player hand: %s (Score: %d)\n", g.Player, pScore)
+	fmt.Printf("Dealer hand: %s (Score: %d)\n\n", g.Dealer, dScore)
 	switch {
 	case pScore > 21:
 		fmt.Println("Result: You busted")
@@ -115,20 +102,4 @@ func End(g Game) Game {
 	case dScore == pScore:
 		fmt.Println("Result: Draw")
 	}
-
-	return ret
-}
-
-func clone(g Game) Game {
-	ret := Game{
-		Deck:   deck_of_cards.From(g.Deck),
-		Player: Hand{cards: make([]deck_of_cards.Card, len(g.Player.cards))},
-		Dealer: Hand{cards: make([]deck_of_cards.Card, len(g.Dealer.cards))},
-		State:  g.State,
-	}
-
-	copy(ret.Player.cards, g.Player.cards)
-	copy(ret.Dealer.cards, g.Dealer.cards)
-
-	return ret
 }
