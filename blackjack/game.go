@@ -5,17 +5,17 @@ import (
 	"github.com/xanish/gophercises/deck_of_cards"
 )
 
-type State int8
+type state int8
 
 const (
-	StatePlayerTurn State = iota
-	StateDealerTurn
-	StateHandOver
+	statePlayerTurn state = iota
+	stateDealerTurn
+	stateHandOver
 )
 
 type Game struct {
 	Deck   deck_of_cards.Deck
-	State  State
+	state  state
 	Player Hand
 	Dealer Hand
 }
@@ -25,35 +25,57 @@ func New() Game {
 		Deck:   deck_of_cards.NewDeck(deck_of_cards.Packs(3), deck_of_cards.Shuffle),
 		Player: Hand{cards: make([]deck_of_cards.Card, 0)},
 		Dealer: Hand{cards: make([]deck_of_cards.Card, 0)},
-		State:  StatePlayerTurn,
+		state:  statePlayerTurn,
 	}
 }
 
+func (g *Game) Play() {
+	deal(g)
+
+	var input string
+	for g.state == statePlayerTurn {
+		fmt.Println()
+		fmt.Printf("Player hand: %s\n", g.Player)
+		fmt.Printf("Dealer hand: %s\n", g.Dealer.DealerString())
+		fmt.Print("\nWhat would you like to do? (h)it or (s)tand... ")
+		_, _ = fmt.Scanln(&input)
+
+		switch input {
+		case "h":
+			Hit(g)
+		case "s":
+			Stand(g)
+		default:
+			fmt.Printf("Invalid choice: %s\n", input)
+		}
+	}
+
+	for g.state == statePlayerTurn {
+		// If dealer score <= 16, we hit
+		// If dealer has a soft 17, then we hit.
+		if g.Dealer.Score() <= 16 || (g.Dealer.Score() == 17 && g.Dealer.MinScore() != 17) {
+			Hit(g)
+		} else {
+			Stand(g)
+		}
+	}
+
+	end(g)
+}
+
 func (g *Game) String() string {
-	return fmt.Sprintf("current deck size: %d\n state: %v\n player hand: %s\n dealer hand: %s\n", g.Deck.RemainingCards(), g.State, g.Player, g.Dealer)
+	return fmt.Sprintf("current deck size: %d\n state: %v\n player hand: %s\n dealer hand: %s\n", g.Deck.RemainingCards(), g.state, g.Player, g.Dealer)
 }
 
 func (g *Game) currentPlayer() *Hand {
-	switch g.State {
-	case StatePlayerTurn:
+	switch g.state {
+	case statePlayerTurn:
 		return &g.Player
-	case StateDealerTurn:
+	case stateDealerTurn:
 		return &g.Dealer
 	default:
 		panic("it isn't currently any player's turn")
 	}
-}
-
-func Deal(g *Game) {
-	g.Player.cards = make([]deck_of_cards.Card, 0, 2)
-	g.Dealer.cards = make([]deck_of_cards.Card, 0, 2)
-
-	for i := 0; i < 2; i++ {
-		draw(&g.Player, &g.Deck)
-		draw(&g.Dealer, &g.Deck)
-	}
-
-	g.State = StatePlayerTurn
 }
 
 func Hit(g *Game) {
@@ -71,10 +93,22 @@ func Hit(g *Game) {
 }
 
 func Stand(g *Game) {
-	g.State++
+	g.state++
 }
 
-func End(g *Game) {
+func deal(g *Game) {
+	g.Player.cards = make([]deck_of_cards.Card, 0, 2)
+	g.Dealer.cards = make([]deck_of_cards.Card, 0, 2)
+
+	for i := 0; i < 2; i++ {
+		draw(&g.Player, &g.Deck)
+		draw(&g.Dealer, &g.Deck)
+	}
+
+	g.state = statePlayerTurn
+}
+
+func end(g *Game) {
 	pScore, dScore := g.Player.Score(), g.Dealer.Score()
 	fmt.Println("\nFinal hands:")
 	fmt.Printf("Player hand: %s (Score: %d)\n", g.Player, pScore)
