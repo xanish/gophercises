@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	g := blackjack.New(1)
+	g := blackjack.New(blackjack.Options{Decks: 3, Rounds: 2})
 
 	g.Play()
 }

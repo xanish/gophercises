@@ -19,22 +19,35 @@ type Game struct {
 	player   Hand
 	dealer   Hand
 	dealerAI DealerAI
-	rounds   int
+	opts     Options
 }
 
-func New(rounds int) Game {
+type Options struct {
+	Decks  int
+	Rounds int
+}
+
+func New(opts Options) Game {
+	if opts.Decks == 0 {
+		opts.Decks = 3
+	}
+
+	if opts.Rounds == 0 {
+		opts.Rounds = 100
+	}
+
 	return Game{
-		deck:     deck_of_cards.NewDeck(deck_of_cards.Packs(3), deck_of_cards.Shuffle),
+		deck:     deck_of_cards.NewDeck(deck_of_cards.Packs(opts.Decks), deck_of_cards.Shuffle),
 		state:    statePlayerTurn,
 		player:   Hand{cards: make([]deck_of_cards.Card, 0)},
 		dealer:   Hand{cards: make([]deck_of_cards.Card, 0)},
 		dealerAI: DealerAI{},
-		rounds:   rounds,
+		opts:     opts,
 	}
 }
 
 func (g *Game) Play(ai AI) {
-	for i := 1; i <= g.rounds; i++ {
+	for i := 1; i <= g.opts.Rounds; i++ {
 		fmt.Printf("\nRound %d:\n", i)
 
 		deal(g)
