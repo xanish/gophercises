@@ -35,8 +35,8 @@ func (g *Game) Play() {
 	var input string
 	for g.state == statePlayerTurn {
 		fmt.Println()
-		fmt.Printf("player hand: %s\n", g.player)
-		fmt.Printf("dealer hand: %s\n", g.dealer.DealerString())
+		fmt.Printf("Player's hand: %s\n", g.player)
+		fmt.Printf("Dealer's hand: %s\n", g.dealer.DealerString())
 		fmt.Print("\nWhat would you like to do? (h)it or (s)tand... ")
 		_, _ = fmt.Scanln(&input)
 
@@ -64,7 +64,7 @@ func (g *Game) Play() {
 }
 
 func (g *Game) String() string {
-	return fmt.Sprintf("current deck size: %d\n state: %v\n player hand: %s\n dealer hand: %s\n", g.deck.RemainingCards(), g.state, g.player, g.dealer)
+	return fmt.Sprintf("Remaining Cards In Deck: %d\n state: %v\n Player's hand: %s\n Dealer's hand: %s\n", g.deck.RemainingCards(), g.state, g.player, g.dealer)
 }
 
 func (g *Game) currentPlayer() *Hand {
@@ -111,19 +111,19 @@ func deal(g *Game) {
 func end(g *Game) {
 	pScore, dScore := g.player.Score(), g.dealer.Score()
 	fmt.Println("\nFinal hands:")
-	fmt.Printf("player hand: %s (Score: %d)\n", g.player, pScore)
-	fmt.Printf("dealer hand: %s (Score: %d)\n\n", g.dealer, dScore)
+	fmt.Printf("Player's hand: %s (Score: %d)\n", g.player, pScore)
+	fmt.Printf("Dealer's hand: %s (Score: %d)\n\n", g.dealer, dScore)
 	switch {
 	case pScore > 21:
 		fmt.Println("Result: You busted")
 	case dScore > 21:
-		fmt.Println("Result: dealer busted")
+		fmt.Println("Result: Dealer busted")
 	case pScore > dScore:
 		fmt.Println("Result: You win!")
 	case dScore > pScore:
 		fmt.Println("Result: You lose")
 	case dScore == pScore:
-		fmt.Println("Result: draw")
+		fmt.Println("Result: Draw")
 	}
 }
 
