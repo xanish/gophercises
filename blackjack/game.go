@@ -38,8 +38,8 @@ func (g *Game) CurrentPlayer() *Hand {
 func NewGameState() Game {
 	return Game{
 		Deck:   deck_of_cards.NewDeck(deck_of_cards.Packs(3), deck_of_cards.Shuffle),
-		Player: Hand{Cards: make([]deck_of_cards.Card, 0)},
-		Dealer: Hand{Cards: make([]deck_of_cards.Card, 0)},
+		Player: Hand{cards: make([]deck_of_cards.Card, 0)},
+		Dealer: Hand{cards: make([]deck_of_cards.Card, 0)},
 		State:  StatePlayerTurn,
 	}
 }
@@ -50,7 +50,7 @@ func Draw(hand *Hand, deck *deck_of_cards.Deck) *Hand {
 		panic(err)
 	}
 
-	hand.Cards = append(hand.Cards, pick)
+	hand.cards = append(hand.cards, pick)
 
 	return hand
 }
@@ -58,8 +58,8 @@ func Draw(hand *Hand, deck *deck_of_cards.Deck) *Hand {
 func Deal(g Game) Game {
 	ret := clone(g)
 
-	ret.Player.Cards = make([]deck_of_cards.Card, 0, 2)
-	ret.Dealer.Cards = make([]deck_of_cards.Card, 0, 2)
+	ret.Player.cards = make([]deck_of_cards.Card, 0, 2)
+	ret.Dealer.cards = make([]deck_of_cards.Card, 0, 2)
 
 	for i := 0; i < 2; i++ {
 		Draw(&ret.Player, &ret.Deck)
@@ -80,7 +80,7 @@ func Hit(g Game) Game {
 	}
 
 	player := ret.CurrentPlayer()
-	player.Cards = append(player.Cards, pick)
+	player.cards = append(player.cards, pick)
 
 	if player.Score() > 21 {
 		return Stand(ret)
@@ -122,13 +122,13 @@ func End(g Game) Game {
 func clone(g Game) Game {
 	ret := Game{
 		Deck:   deck_of_cards.From(g.Deck),
-		Player: Hand{Cards: make([]deck_of_cards.Card, len(g.Player.Cards))},
-		Dealer: Hand{Cards: make([]deck_of_cards.Card, len(g.Dealer.Cards))},
+		Player: Hand{cards: make([]deck_of_cards.Card, len(g.Player.cards))},
+		Dealer: Hand{cards: make([]deck_of_cards.Card, len(g.Dealer.cards))},
 		State:  g.State,
 	}
 
-	copy(ret.Player.Cards, g.Player.Cards)
-	copy(ret.Dealer.Cards, g.Dealer.Cards)
+	copy(ret.Player.cards, g.Player.cards)
+	copy(ret.Dealer.cards, g.Dealer.cards)
 
 	return ret
 }
