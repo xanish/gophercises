@@ -11,7 +11,11 @@ func NewPlayerAI() *PlayerAI {
 	return &PlayerAI{}
 }
 
-func (ai *PlayerAI) Bet() int {
+func (ai *PlayerAI) Bet(shuffled bool) int {
+	if shuffled {
+		fmt.Println("The deck was just shuffled.")
+	}
+
 	fmt.Print("How much will you bet? ")
 	var bet int
 	_, _ = fmt.Scanln(&bet)

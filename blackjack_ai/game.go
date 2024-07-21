@@ -59,7 +59,13 @@ func (g *Game) Play(ai AI) int {
 	for i := 1; i <= g.opts.Rounds; i++ {
 		fmt.Printf("\nRound %d:\n", i)
 
-		bet(g, ai)
+		shuffled := false
+		if float32(g.deck.RemainingCards()) < float32(g.opts.Decks*52)*0.5 {
+			g.deck = deck_of_cards.NewDeck(deck_of_cards.Packs(g.opts.Decks), deck_of_cards.Shuffle)
+			shuffled = false
+		}
+
+		bet(g, ai, shuffled)
 
 		deal(g)
 
@@ -112,8 +118,8 @@ func Stand(g *Game) {
 	g.state++
 }
 
-func bet(g *Game, ai AI) int {
-	g.bet = ai.Bet()
+func bet(g *Game, ai AI, shuffled bool) int {
+	g.bet = ai.Bet(shuffled)
 
 	return g.bet
 }

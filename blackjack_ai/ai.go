@@ -5,7 +5,7 @@ import (
 )
 
 type AI interface {
-	Bet() int
+	Bet(shuffled bool) int
 	Play(hand Hand, dealer deck_of_cards.Card) Move
 	Results(hand Hand, dealer Hand, result string)
 }

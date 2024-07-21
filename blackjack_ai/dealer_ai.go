@@ -4,7 +4,7 @@ import "github.com/xanish/gophercises/deck_of_cards"
 
 type DealerAI struct{}
 
-func (ai DealerAI) Bet() int {
+func (ai DealerAI) Bet(shuffled bool) int {
 	return 1
 }
 
