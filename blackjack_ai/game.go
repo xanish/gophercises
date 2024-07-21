@@ -14,17 +14,22 @@ const (
 )
 
 type Game struct {
-	deck     deck_of_cards.Deck
-	state    state
-	player   Hand
+	deck  deck_of_cards.Deck
+	state state
+	opts  Options
+
+	player  Hand
+	bet     int
+	balance int
+
 	dealer   Hand
 	dealerAI DealerAI
-	opts     Options
 }
 
 type Options struct {
 	Decks  int
 	Rounds int
+	Payout float32
 }
 
 func New(opts Options) Game {
@@ -34,6 +39,10 @@ func New(opts Options) Game {
 
 	if opts.Rounds == 0 {
 		opts.Rounds = 100
+	}
+
+	if opts.Payout == 0.0 {
+		opts.Payout = 1.5
 	}
 
 	return Game{
@@ -46,9 +55,11 @@ func New(opts Options) Game {
 	}
 }
 
-func (g *Game) Play(ai AI) {
+func (g *Game) Play(ai AI) int {
 	for i := 1; i <= g.opts.Rounds; i++ {
 		fmt.Printf("\nRound %d:\n", i)
+
+		bet(g, ai)
 
 		deal(g)
 
@@ -64,6 +75,8 @@ func (g *Game) Play(ai AI) {
 
 		end(g, ai)
 	}
+
+	return g.balance
 }
 
 func (g *Game) String() string {
@@ -99,6 +112,12 @@ func Stand(g *Game) {
 	g.state++
 }
 
+func bet(g *Game, ai AI) int {
+	g.bet = ai.Bet()
+
+	return g.bet
+}
+
 func deal(g *Game) {
 	g.player.cards = make([]deck_of_cards.Card, 0, 2)
 	g.dealer.cards = make([]deck_of_cards.Card, 0, 2)
@@ -113,20 +132,28 @@ func deal(g *Game) {
 
 func end(g *Game, ai AI) {
 	pScore, dScore := g.player.Score(), g.dealer.Score()
+	winnings := g.bet
 
 	var result string
 	switch {
 	case pScore > 21:
+		winnings *= -1
 		result = "You busted"
 	case dScore > 21:
+		winnings = int(float32(winnings) * g.opts.Payout)
 		result = "Dealer busted"
 	case pScore > dScore:
+		winnings = int(float32(winnings) * g.opts.Payout)
 		result = "You win!"
 	case dScore > pScore:
+		winnings *= -1
 		result = "You lose"
 	case dScore == pScore:
+		winnings *= 0
 		result = "Draw"
 	}
+
+	g.balance += winnings
 
 	ai.Results(g.player, g.dealer, result)
 }

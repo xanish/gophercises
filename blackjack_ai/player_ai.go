@@ -12,7 +12,11 @@ func NewPlayerAI() *PlayerAI {
 }
 
 func (ai *PlayerAI) Bet() int {
-	return 1
+	fmt.Print("How much will you bet? ")
+	var bet int
+	_, _ = fmt.Scanln(&bet)
+
+	return bet
 }
 
 func (ai *PlayerAI) Play(hand Hand, dealer deck_of_cards.Card) Move {

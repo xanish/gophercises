@@ -14,16 +14,21 @@ const (
 )
 
 type Game struct {
-	deck   deck_of_cards.Deck
-	state  state
-	player Hand
+	deck  deck_of_cards.Deck
+	state state
+	opts  Options
+
+	player  Hand
+	bet     int
+	balance int
+
 	dealer Hand
-	opts   Options
 }
 
 type Options struct {
 	Decks  int
 	Rounds int
+	Payout float32
 }
 
 func New(opts Options) Game {
@@ -35,6 +40,10 @@ func New(opts Options) Game {
 		opts.Rounds = 100
 	}
 
+	if opts.Payout == 0.0 {
+		opts.Payout = 1.5
+	}
+
 	return Game{
 		deck:   deck_of_cards.NewDeck(deck_of_cards.Packs(opts.Decks), deck_of_cards.Shuffle),
 		player: Hand{cards: make([]deck_of_cards.Card, 0)},
@@ -44,9 +53,11 @@ func New(opts Options) Game {
 	}
 }
 
-func (g *Game) Play() {
+func (g *Game) Play() int {
 	for i := 1; i <= g.opts.Rounds; i++ {
 		fmt.Printf("Round %d:\n", i)
+
+		bet(g)
 
 		deal(g)
 
@@ -80,6 +91,8 @@ func (g *Game) Play() {
 
 		end(g)
 	}
+
+	return g.balance
 }
 
 func (g *Game) String() string {
@@ -115,6 +128,11 @@ func Stand(g *Game) {
 	g.state++
 }
 
+func bet(g *Game) {
+	fmt.Print("How much will you bet? ")
+	_, _ = fmt.Scanln(&g.bet)
+}
+
 func deal(g *Game) {
 	g.player.cards = make([]deck_of_cards.Card, 0, 2)
 	g.dealer.cards = make([]deck_of_cards.Card, 0, 2)
@@ -129,21 +147,30 @@ func deal(g *Game) {
 
 func end(g *Game) {
 	pScore, dScore := g.player.Score(), g.dealer.Score()
+	winnings := g.bet
+
 	fmt.Println("\nFinal hands:")
 	fmt.Printf("Player's hand: %s (Score: %d)\n", g.player, pScore)
 	fmt.Printf("Dealer's hand: %s (Score: %d)\n\n", g.dealer, dScore)
 	switch {
 	case pScore > 21:
+		winnings *= -1
 		fmt.Println("Result: You busted")
 	case dScore > 21:
+		winnings = int(float32(winnings) * g.opts.Payout)
 		fmt.Println("Result: Dealer busted")
 	case pScore > dScore:
+		winnings = int(float32(winnings) * g.opts.Payout)
 		fmt.Println("Result: You win!")
 	case dScore > pScore:
+		winnings *= -1
 		fmt.Println("Result: You lose")
 	case dScore == pScore:
+		winnings *= 0
 		fmt.Println("Result: Draw")
 	}
+
+	g.balance += winnings
 }
 
 func draw(hand *Hand, deck *deck_of_cards.Deck) *Hand {
