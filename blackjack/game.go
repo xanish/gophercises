@@ -50,7 +50,7 @@ func (g *Game) Play() {
 		}
 	}
 
-	for g.state == statePlayerTurn {
+	for g.state == stateDealerTurn {
 		// If dealer score <= 16, we hit
 		// If dealer has a soft 17, then we hit.
 		if g.dealer.Score() <= 16 || (g.dealer.Score() == 17 && g.dealer.MinScore() != 17) {
