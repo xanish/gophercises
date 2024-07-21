@@ -12,7 +12,7 @@ type Hand struct {
 }
 
 func (h Hand) Score() int {
-	minScore := h.MinScore()
+	minScore := h.minScore()
 	if minScore > 11 {
 		return minScore
 	}
@@ -28,7 +28,13 @@ func (h Hand) Score() int {
 	return minScore
 }
 
-func (h Hand) MinScore() int {
+// IsSoftScore returns true if the score of a hand is a soft score - that is if an ace
+// is being counted as 11 points.
+func (h Hand) IsSoftScore() bool {
+	return h.minScore() != h.Score()
+}
+
+func (h Hand) minScore() int {
 	score := 0
 	for _, c := range h.cards {
 		score += min(int(c.Rank), 10)
