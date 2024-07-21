@@ -18,49 +18,55 @@ type Game struct {
 	state  state
 	player Hand
 	dealer Hand
+	rounds int
 }
 
-func New() Game {
+func New(rounds int) Game {
 	return Game{
 		deck:   deck_of_cards.NewDeck(deck_of_cards.Packs(3), deck_of_cards.Shuffle),
 		player: Hand{cards: make([]deck_of_cards.Card, 0)},
 		dealer: Hand{cards: make([]deck_of_cards.Card, 0)},
 		state:  statePlayerTurn,
+		rounds: rounds,
 	}
 }
 
 func (g *Game) Play() {
-	deal(g)
+	for i := 1; i <= g.rounds; i++ {
+		fmt.Printf("Round %d:\n", i)
 
-	var input string
-	for g.state == statePlayerTurn {
-		fmt.Println()
-		fmt.Printf("Player's hand: %s\n", g.player)
-		fmt.Printf("Dealer's hand: %s\n", g.dealer.DealerString())
-		fmt.Print("\nWhat would you like to do? (h)it or (s)tand... ")
-		_, _ = fmt.Scanln(&input)
+		deal(g)
 
-		switch input {
-		case "h":
-			Hit(g)
-		case "s":
-			Stand(g)
-		default:
-			fmt.Printf("Invalid choice: %s\n", input)
+		var input string
+		for g.state == statePlayerTurn {
+			fmt.Println()
+			fmt.Printf("Player's hand: %s\n", g.player)
+			fmt.Printf("Dealer's hand: %s\n", g.dealer.DealerString())
+			fmt.Print("\nWhat would you like to do? (h)it or (s)tand... ")
+			_, _ = fmt.Scanln(&input)
+
+			switch input {
+			case "h":
+				Hit(g)
+			case "s":
+				Stand(g)
+			default:
+				fmt.Printf("Invalid choice: %s\n", input)
+			}
 		}
-	}
 
-	for g.state == stateDealerTurn {
-		// If dealer score <= 16, we hit
-		// If dealer has a soft 17, then we hit.
-		if g.dealer.Score() <= 16 || (g.dealer.Score() == 17 && g.dealer.MinScore() != 17) {
-			Hit(g)
-		} else {
-			Stand(g)
+		for g.state == stateDealerTurn {
+			// If dealer score <= 16, we hit
+			// If dealer has a soft 17, then we hit.
+			if g.dealer.Score() <= 16 || (g.dealer.Score() == 17 && g.dealer.MinScore() != 17) {
+				Hit(g)
+			} else {
+				Stand(g)
+			}
 		}
-	}
 
-	end(g)
+		end(g)
+	}
 }
 
 func (g *Game) String() string {
