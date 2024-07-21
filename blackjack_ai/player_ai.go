@@ -29,7 +29,7 @@ func (ai *PlayerAI) Play(hand Hand, dealer deck_of_cards.Card) Move {
 		fmt.Println()
 		fmt.Printf("Player's hand: %s\n", hand)
 		fmt.Printf("Dealer's card: %s\n", dealer)
-		fmt.Print("\nWhat would you like to do? (h)it or (s)tand... ")
+		fmt.Print("\nWhat would you like to do? (h)it, (s)tand or (d)ouble... ")
 		_, _ = fmt.Scanln(&input)
 
 		switch input {
@@ -37,6 +37,8 @@ func (ai *PlayerAI) Play(hand Hand, dealer deck_of_cards.Card) Move {
 			return Hit
 		case "s":
 			return Stand
+		case "d":
+			return Double
 		default:
 			fmt.Printf("Invalid choice: %s\n", input)
 		}

@@ -1,6 +1,7 @@
 package blackjack_ai
 
 import (
+	"errors"
 	"fmt"
 	"github.com/xanish/gophercises/deck_of_cards"
 )
@@ -71,12 +72,18 @@ func (g *Game) Play(ai AI) int {
 
 		for g.state == statePlayerTurn {
 			move := ai.Play(g.player, g.dealer.cards[0])
-			move(g)
+			err := move(g)
+
+			switch err {
+			case nil:
+			default:
+				panic(err)
+			}
 		}
 
 		for g.state == stateDealerTurn {
 			move := g.dealerAI.Play(g.dealer, g.dealer.cards[0])
-			move(g)
+			_ = move(g)
 		}
 
 		end(g, ai)
@@ -100,7 +107,7 @@ func (g *Game) currentPlayer() *Hand {
 	}
 }
 
-func Hit(g *Game) {
+func Hit(g *Game) error {
 	pick, err := g.deck.Draw()
 	if err != nil {
 		panic(err)
@@ -110,12 +117,28 @@ func Hit(g *Game) {
 	player.cards = append(player.cards, pick)
 
 	if player.Score() > 21 {
-		Stand(g)
+		_ = Stand(g)
 	}
+
+	return nil
 }
 
-func Stand(g *Game) {
+func Stand(g *Game) error {
 	g.state++
+
+	return nil
+}
+
+func Double(g *Game) error {
+	if len(g.player.cards) != 2 {
+		return errors.New("can only double on a hand with 2 cards")
+	}
+
+	g.bet *= 2
+
+	_ = Hit(g)
+	_ = Stand(g)
+	return nil
 }
 
 func bet(g *Game, ai AI, shuffled bool) int {

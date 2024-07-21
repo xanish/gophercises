@@ -10,4 +10,4 @@ type AI interface {
 	Results(hand Hand, dealer Hand, result string)
 }
 
-type Move func(*Game)
+type Move func(*Game) error
