@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	g := blackjack.NewGameState()
+	g := blackjack.New()
 
 	for round := 1; round <= 10; round++ {
 		fmt.Printf("Round %d:\n", round)

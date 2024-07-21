@@ -20,6 +20,15 @@ type Game struct {
 	Dealer Hand
 }
 
+func New() Game {
+	return Game{
+		Deck:   deck_of_cards.NewDeck(deck_of_cards.Packs(3), deck_of_cards.Shuffle),
+		Player: Hand{cards: make([]deck_of_cards.Card, 0)},
+		Dealer: Hand{cards: make([]deck_of_cards.Card, 0)},
+		State:  StatePlayerTurn,
+	}
+}
+
 func (g *Game) String() string {
 	return fmt.Sprintf("current deck size: %d\n state: %v\n player hand: %s\n dealer hand: %s\n", g.Deck.RemainingCards(), g.State, g.Player, g.Dealer)
 }
@@ -32,15 +41,6 @@ func (g *Game) currentPlayer() *Hand {
 		return &g.Dealer
 	default:
 		panic("it isn't currently any player's turn")
-	}
-}
-
-func NewGameState() Game {
-	return Game{
-		Deck:   deck_of_cards.NewDeck(deck_of_cards.Packs(3), deck_of_cards.Shuffle),
-		Player: Hand{cards: make([]deck_of_cards.Card, 0)},
-		Dealer: Hand{cards: make([]deck_of_cards.Card, 0)},
-		State:  StatePlayerTurn,
 	}
 }
 
