@@ -6,41 +6,41 @@ import (
 )
 
 func main() {
-	gs := blackjack.NewGameState()
+	g := blackjack.NewGameState()
 
 	for round := 1; round <= 10; round++ {
 		fmt.Printf("Round %d:\n", round)
 
-		gs = blackjack.Deal(gs)
+		g = blackjack.Deal(g)
 
 		var input string
-		for gs.State == blackjack.StatePlayerTurn {
+		for g.State == blackjack.StatePlayerTurn {
 			fmt.Println()
-			fmt.Printf("Player hand: %s\n", gs.Player)
-			fmt.Printf("Dealer hand: %s\n", gs.Dealer.DealerString())
+			fmt.Printf("Player hand: %s\n", g.Player)
+			fmt.Printf("Dealer hand: %s\n", g.Dealer.DealerString())
 			fmt.Print("\nWhat would you like to do? (h)it or (s)tand... ")
 			_, _ = fmt.Scanln(&input)
 
 			switch input {
 			case "h":
-				gs = blackjack.Hit(gs)
+				g = blackjack.Hit(g)
 			case "s":
-				gs = blackjack.Stand(gs)
+				g = blackjack.Stand(g)
 			default:
 				fmt.Printf("Invalid choice: %s\n", input)
 			}
 		}
 
-		for gs.State == blackjack.StatePlayerTurn {
+		for g.State == blackjack.StatePlayerTurn {
 			// If dealer score <= 16, we hit
 			// If dealer has a soft 17, then we hit.
-			if gs.Dealer.Score() <= 16 || (gs.Dealer.Score() == 17 && gs.Dealer.MinScore() != 17) {
-				gs = blackjack.Hit(gs)
+			if g.Dealer.Score() <= 16 || (g.Dealer.Score() == 17 && g.Dealer.MinScore() != 17) {
+				g = blackjack.Hit(g)
 			} else {
-				gs = blackjack.Stand(gs)
+				g = blackjack.Stand(g)
 			}
 		}
 
-		gs = blackjack.End(gs)
+		g = blackjack.End(g)
 	}
 }

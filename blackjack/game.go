@@ -13,30 +13,30 @@ const (
 	StateHandOver
 )
 
-type GameState struct {
+type Game struct {
 	Deck   deck_of_cards.Deck
 	State  State
 	Player Hand
 	Dealer Hand
 }
 
-func (gs *GameState) String() string {
-	return fmt.Sprintf("current deck size: %d\n state: %v\n player hand: %s\n dealer hand: %s\n", gs.Deck.RemainingCards(), gs.State, gs.Player, gs.Dealer)
+func (g *Game) String() string {
+	return fmt.Sprintf("current deck size: %d\n state: %v\n player hand: %s\n dealer hand: %s\n", g.Deck.RemainingCards(), g.State, g.Player, g.Dealer)
 }
 
-func (gs *GameState) CurrentPlayer() *Hand {
-	switch gs.State {
+func (g *Game) CurrentPlayer() *Hand {
+	switch g.State {
 	case StatePlayerTurn:
-		return &gs.Player
+		return &g.Player
 	case StateDealerTurn:
-		return &gs.Dealer
+		return &g.Dealer
 	default:
 		panic("it isn't currently any player's turn")
 	}
 }
 
-func NewGameState() GameState {
-	return GameState{
+func NewGameState() Game {
+	return Game{
 		Deck:   deck_of_cards.NewDeck(deck_of_cards.Packs(3), deck_of_cards.Shuffle),
 		Player: Hand{Cards: make([]deck_of_cards.Card, 0)},
 		Dealer: Hand{Cards: make([]deck_of_cards.Card, 0)},
@@ -55,8 +55,8 @@ func Draw(hand *Hand, deck *deck_of_cards.Deck) *Hand {
 	return hand
 }
 
-func Deal(gs GameState) GameState {
-	ret := clone(gs)
+func Deal(g Game) Game {
+	ret := clone(g)
 
 	ret.Player.Cards = make([]deck_of_cards.Card, 0, 2)
 	ret.Dealer.Cards = make([]deck_of_cards.Card, 0, 2)
@@ -71,8 +71,8 @@ func Deal(gs GameState) GameState {
 	return ret
 }
 
-func Hit(gs GameState) GameState {
-	ret := clone(gs)
+func Hit(g Game) Game {
+	ret := clone(g)
 
 	pick, err := ret.Deck.Draw()
 	if err != nil {
@@ -89,15 +89,15 @@ func Hit(gs GameState) GameState {
 	return ret
 }
 
-func Stand(gs GameState) GameState {
-	ret := clone(gs)
+func Stand(g Game) Game {
+	ret := clone(g)
 	ret.State++
 
 	return ret
 }
 
-func End(gs GameState) GameState {
-	ret := clone(gs)
+func End(g Game) Game {
+	ret := clone(g)
 
 	pScore, dScore := ret.Player.Score(), ret.Dealer.Score()
 	fmt.Println("\nFinal hands:")
@@ -119,16 +119,16 @@ func End(gs GameState) GameState {
 	return ret
 }
 
-func clone(gs GameState) GameState {
-	ret := GameState{
-		Deck:   deck_of_cards.From(gs.Deck),
-		Player: Hand{Cards: make([]deck_of_cards.Card, len(gs.Player.Cards))},
-		Dealer: Hand{Cards: make([]deck_of_cards.Card, len(gs.Dealer.Cards))},
-		State:  gs.State,
+func clone(g Game) Game {
+	ret := Game{
+		Deck:   deck_of_cards.From(g.Deck),
+		Player: Hand{Cards: make([]deck_of_cards.Card, len(g.Player.Cards))},
+		Dealer: Hand{Cards: make([]deck_of_cards.Card, len(g.Dealer.Cards))},
+		State:  g.State,
 	}
 
-	copy(ret.Player.Cards, gs.Player.Cards)
-	copy(ret.Dealer.Cards, gs.Dealer.Cards)
+	copy(ret.Player.Cards, g.Player.Cards)
+	copy(ret.Dealer.Cards, g.Dealer.Cards)
 
 	return ret
 }
