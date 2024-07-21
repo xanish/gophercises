@@ -9,7 +9,7 @@ import (
 )
 
 type Deck struct {
-	Cards []Card
+	cards []Card
 }
 
 var shuffleRand = rand.New(rand.NewSource(time.Now().Unix()))
@@ -26,22 +26,33 @@ func NewDeck(opts ...func([]Card) []Card) Deck {
 		cards = opt(cards)
 	}
 
-	return Deck{Cards: cards}
+	return Deck{cards: cards}
+}
+
+func From(deck Deck) Deck {
+	cards := make([]Card, len(deck.cards))
+	copy(cards, deck.cards)
+
+	return Deck{cards: cards}
 }
 
 func (d *Deck) Draw() (Card, error) {
-	if len(d.Cards) == 0 {
+	if len(d.cards) == 0 {
 		return Card{}, fmt.Errorf("no more cards to draw from")
 	}
 
-	top, rest := d.Cards[0], d.Cards[1:]
-	d.Cards = rest
+	top, rest := d.cards[0], d.cards[1:]
+	d.cards = rest
 	return top, nil
+}
+
+func (d *Deck) RemainingCards() int {
+	return len(d.cards)
 }
 
 func (d *Deck) String() string {
 	cards := strings.Builder{}
-	for _, card := range d.Cards {
+	for _, card := range d.cards {
 		cards.WriteString(fmt.Sprintf("%s\n", card.String()))
 	}
 

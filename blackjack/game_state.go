@@ -21,7 +21,7 @@ type GameState struct {
 }
 
 func (gs *GameState) String() string {
-	return fmt.Sprintf("current deck size: %d\n state: %v\n player hand: %s\n dealer hand: %s\n", len(gs.Deck.Cards), gs.State, gs.Player, gs.Dealer)
+	return fmt.Sprintf("current deck size: %d\n state: %v\n player hand: %s\n dealer hand: %s\n", gs.Deck.RemainingCards(), gs.State, gs.Player, gs.Dealer)
 }
 
 func (gs *GameState) CurrentPlayer() *Hand {
@@ -121,13 +121,12 @@ func End(gs GameState) GameState {
 
 func clone(gs GameState) GameState {
 	ret := GameState{
-		Deck:   deck_of_cards.Deck{Cards: make([]deck_of_cards.Card, len(gs.Deck.Cards))},
+		Deck:   deck_of_cards.From(gs.Deck),
 		Player: Hand{Cards: make([]deck_of_cards.Card, len(gs.Player.Cards))},
 		Dealer: Hand{Cards: make([]deck_of_cards.Card, len(gs.Dealer.Cards))},
 		State:  gs.State,
 	}
 
-	copy(ret.Deck.Cards, gs.Deck.Cards)
 	copy(ret.Player.Cards, gs.Player.Cards)
 	copy(ret.Dealer.Cards, gs.Dealer.Cards)
 
