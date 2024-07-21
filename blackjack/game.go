@@ -44,24 +44,13 @@ func (g *Game) currentPlayer() *Hand {
 	}
 }
 
-func Draw(hand *Hand, deck *deck_of_cards.Deck) *Hand {
-	pick, err := deck.Draw()
-	if err != nil {
-		panic(err)
-	}
-
-	hand.cards = append(hand.cards, pick)
-
-	return hand
-}
-
 func Deal(g *Game) {
 	g.Player.cards = make([]deck_of_cards.Card, 0, 2)
 	g.Dealer.cards = make([]deck_of_cards.Card, 0, 2)
 
 	for i := 0; i < 2; i++ {
-		Draw(&g.Player, &g.Deck)
-		Draw(&g.Dealer, &g.Deck)
+		draw(&g.Player, &g.Deck)
+		draw(&g.Dealer, &g.Deck)
 	}
 
 	g.State = StatePlayerTurn
@@ -100,6 +89,17 @@ func End(g *Game) {
 	case dScore > pScore:
 		fmt.Println("Result: You lose")
 	case dScore == pScore:
-		fmt.Println("Result: Draw")
+		fmt.Println("Result: draw")
 	}
+}
+
+func draw(hand *Hand, deck *deck_of_cards.Deck) *Hand {
+	pick, err := deck.Draw()
+	if err != nil {
+		panic(err)
+	}
+
+	hand.cards = append(hand.cards, pick)
+
+	return hand
 }
