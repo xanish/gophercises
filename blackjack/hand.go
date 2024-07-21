@@ -1,6 +1,7 @@
 package blackjack
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/xanish/gophercises/deck_of_cards"
@@ -41,7 +42,7 @@ func (h Hand) String() string {
 		cards = append(cards, card.String())
 	}
 
-	return strings.Join(cards, ", ")
+	return fmt.Sprintf("[%s], (Score: %d)", strings.Join(cards, ", "), h.Score())
 }
 
 func (h Hand) DealerString() string {
@@ -54,5 +55,5 @@ func (h Hand) DealerString() string {
 		}
 	}
 
-	return strings.Join(cards, ", ")
+	return fmt.Sprintf("[%s]", strings.Join(cards, ", "))
 }
