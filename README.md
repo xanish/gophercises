@@ -16,6 +16,7 @@ Material can be found [here](https://courses.calhoun.io/courses/cor_gophercises)
 | 09 | Deck of Cards             | [here](./deck_of_cards/README.md)           |
 | 10 | Blackjack                 | [here](./blackjack/README.md)               |
 | 11 | Blackjack AI              | [here](./blackjack_ai/README.md)            |
+| 12 | File Renaming Tool        | [here](./file_renaming_tool/README.md)      |
 
 ## Checking Test Coverage
 
