@@ -19,7 +19,7 @@ type Game struct {
 	state state
 	opts  Options
 
-	player  Hand
+	player  []Hand
 	bet     int
 	balance int
 
@@ -46,10 +46,12 @@ func New(opts Options) Game {
 		opts.Payout = 1.5
 	}
 
+	hand := make([]Hand, 0)
+	hand = append(hand, Hand{cards: make([]deck_of_cards.Card, 0)})
 	return Game{
 		deck:     deck_of_cards.NewDeck(deck_of_cards.Packs(opts.Decks), deck_of_cards.Shuffle),
 		state:    statePlayerTurn,
-		player:   Hand{cards: make([]deck_of_cards.Card, 0)},
+		player:   hand,
 		dealer:   Hand{cards: make([]deck_of_cards.Card, 0)},
 		dealerAI: DealerAI{},
 		opts:     opts,
@@ -71,7 +73,7 @@ func (g *Game) Play(ai AI) int {
 		deal(g)
 
 		for g.state == statePlayerTurn {
-			move := ai.Play(g.player, g.dealer.cards[0])
+			move := ai.Play(g.player[0], g.dealer.cards[0])
 			err := move(g)
 
 			switch err {
@@ -99,7 +101,7 @@ func (g *Game) String() string {
 func (g *Game) currentPlayer() *Hand {
 	switch g.state {
 	case statePlayerTurn:
-		return &g.player
+		return &g.player[0]
 	case stateDealerTurn:
 		return &g.dealer
 	default:
@@ -130,7 +132,7 @@ func Stand(g *Game) error {
 }
 
 func Double(g *Game) error {
-	if len(g.player.cards) != 2 {
+	if len(g.player[0].cards) != 2 {
 		return errors.New("can only double on a hand with 2 cards")
 	}
 
@@ -148,11 +150,11 @@ func bet(g *Game, ai AI, shuffled bool) int {
 }
 
 func deal(g *Game) {
-	g.player.cards = make([]deck_of_cards.Card, 0, 2)
+	g.player[0].cards = make([]deck_of_cards.Card, 0, 2)
 	g.dealer.cards = make([]deck_of_cards.Card, 0, 2)
 
 	for i := 0; i < 2; i++ {
-		draw(&g.player, &g.deck)
+		draw(&g.player[0], &g.deck)
 		draw(&g.dealer, &g.deck)
 	}
 
@@ -160,7 +162,7 @@ func deal(g *Game) {
 }
 
 func end(g *Game, ai AI) {
-	pScore, dScore := g.player.Score(), g.dealer.Score()
+	pScore, dScore := g.player[0].Score(), g.dealer.Score()
 	winnings := g.bet
 
 	var result string
@@ -184,7 +186,7 @@ func end(g *Game, ai AI) {
 
 	g.balance += winnings
 
-	ai.Results(g.player, g.dealer, result)
+	ai.Results(g.player[0], g.dealer, result)
 }
 
 func draw(hand *Hand, deck *deck_of_cards.Deck) *Hand {
