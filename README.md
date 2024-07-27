@@ -3,20 +3,20 @@
 Gophercises consists of a series of mini-exercises that progressively introduce different aspects of the Go programming language.
 Material can be found [here](https://courses.calhoun.io/courses/cor_gophercises).
 
-| #  | Topic                     | Solution                                    |
-|----|---------------------------|---------------------------------------------|
-| 01 | Quiz Game                 | [here](./quiz_game/README.md)               |
-| 02 | URL Shortener             | [here](./url_shortener/README.md)           |
-| 03 | Choose Your Own Adventure | [here](./choose_your_adventure/README.md)   |
-| 04 | HTML Link Parser          | [here](./html_link_parser/README.md)        |
-| 05 | Sitemap Builder           | [here](./sitemap_builder/README.md)         |
-| 06 | Hacker Rank Problem       | [here](./strings_and_bytes/README.md)       |
-| 07 | CLI Task Manager          | [here](./cli_task_manager/README.md)        |
-| 08 | Phone Number Normalizer   | [here](./phone_number_normalizer/README.md) |
-| 09 | Deck of Cards             | [here](./deck_of_cards/README.md)           |
-| 10 | Blackjack                 | [here](./blackjack/README.md)               |
-| 11 | Blackjack AI              | [here](./blackjack_ai/README.md)            |
-| 12 | File Renaming Tool        | [here](./file_renaming_tool/README.md)      |
+| #  | Topic                     | Solution                                    | Tests |
+|----|---------------------------|---------------------------------------------|-------|
+| 01 | Quiz Game                 | [here](./quiz_game/README.md)               | Done  |
+| 02 | URL Shortener             | [here](./url_shortener/README.md)           | Done  |
+| 03 | Choose Your Own Adventure | [here](./choose_your_adventure/README.md)   | Done  |
+| 04 | HTML Link Parser          | [here](./html_link_parser/README.md)        | Done  |
+| 05 | Sitemap Builder           | [here](./sitemap_builder/README.md)         | Done  |
+| 06 | Hacker Rank Problem       | [here](./strings_and_bytes/README.md)       | Done  |
+| 07 | CLI Task Manager          | [here](./cli_task_manager/README.md)        | Done  |
+| 08 | Phone Number Normalizer   | [here](./phone_number_normalizer/README.md) | Done  |
+| 09 | Deck of Cards             | [here](./deck_of_cards/README.md)           | Done  |
+| 10 | Blackjack                 | [here](./blackjack/README.md)               | Todo  |
+| 11 | Blackjack AI              | [here](./blackjack_ai/README.md)            | Todo  |
+| 12 | File Renaming Tool        | [here](./file_renaming_tool/README.md)      | Todo  |
 
 ## Checking Test Coverage
 
