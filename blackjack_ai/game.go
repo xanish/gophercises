@@ -158,7 +158,7 @@ func Stand(g *Game) error {
 
 func Split(g *Game) error {
 	hand := g.currentHandInPlay()
-	if len(hand.cards) != 2 {
+	if hand.NumCards() != 2 {
 		return errors.New("you can only split with two cards in your hand")
 	}
 
@@ -181,7 +181,7 @@ func Split(g *Game) error {
 
 func Double(g *Game) error {
 	hand := g.currentHandInPlay()
-	if len(hand.cards) != 2 {
+	if hand.NumCards() != 2 {
 		return errors.New("can only double on a hand with 2 cards")
 	}
 
@@ -190,6 +190,14 @@ func Double(g *Game) error {
 	_ = Hit(g)
 	_ = Stand(g)
 	return nil
+}
+
+// IsSoft returns true if the score of a hand is a soft score - that is if an ace
+// is being counted as 11 points.
+func IsSoft(hand Hand) bool {
+	minScore := hand.minScore()
+	score := hand.Score()
+	return minScore != score
 }
 
 func bet(g *Game, ai AI, shuffled bool) int {
@@ -267,5 +275,9 @@ func draw(hand *Hand, deck *deck_of_cards.Deck) *Hand {
 }
 
 func isBlackJack(hand Hand) bool {
-	return len(hand.cards) == 2 && hand.Score() == 21
+	return hand.NumCards() == 2 && hand.Score() == 21
+}
+
+func CanSplit(hand Hand) bool {
+	return hand.NumCards() == 2 && hand.cards[0] == hand.cards[1]
 }

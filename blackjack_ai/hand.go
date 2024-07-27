@@ -12,6 +12,17 @@ type Hand struct {
 	bet   int
 }
 
+func NewHand(cards []deck_of_cards.Card, bet int) Hand {
+	return Hand{
+		cards: cards,
+		bet:   bet,
+	}
+}
+
+func (h Hand) NumCards() int {
+	return len(h.cards)
+}
+
 func (h Hand) Score() int {
 	minScore := h.minScore()
 	if minScore > 11 {
@@ -27,6 +38,15 @@ func (h Hand) Score() int {
 	}
 
 	return minScore
+}
+
+func (h Hand) Scores() []int {
+	var scores []int
+	for _, c := range h.cards {
+		scores = append(scores, NewHand([]deck_of_cards.Card{c}, 0).Score())
+	}
+
+	return scores
 }
 
 // IsSoftScore returns true if the score of a hand is a soft score - that is if an ace
