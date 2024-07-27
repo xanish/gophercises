@@ -67,25 +67,33 @@ func (g *Game) Play(ai AI) int {
 	}
 
 	for i := 0; i < len(g.player); i++ {
+		g.currentHandIdxInPlay = i
+
 		if float32(g.deck.RemainingCards()) < float32(g.opts.Decks*52)*0.5 {
 			g.deck = deck_of_cards.NewDeck(deck_of_cards.Packs(g.opts.Decks), deck_of_cards.Shuffle)
 			bet(g, ai, true)
 		}
 
-		for g.state == statePlayerTurn {
-			g.currentHandIdxInPlay = i
+		for g.state == statePlayerTurn && g.currentHandIdxInPlay == i {
 			move := ai.Play(g.player[i], g.dealer.cards[0])
 			err := move(g)
 
+			bust := false
 			for err != nil {
 				// go to the next split
 				if errors.Is(err, errBust) {
+					bust = true
 					break
 				}
 
 				fmt.Printf("\nInvalid move: %v\n", err)
 				move = ai.Play(g.player[i], g.dealer.cards[0])
 				err = move(g)
+			}
+
+			if bust {
+				fmt.Println("Busted")
+				break
 			}
 		}
 	}
@@ -136,6 +144,7 @@ func Stand(g *Game) error {
 		g.state++
 		return nil
 	}
+
 	if g.state == statePlayerTurn {
 		g.currentHandIdxInPlay++
 		if g.currentHandIdxInPlay >= len(g.player) {
@@ -165,7 +174,7 @@ func Split(g *Game) error {
 
 	// make the old hand have only the first card since we split the
 	// second one in new hand
-	hand.cards = hand.cards[:1]
+	g.player[g.currentHandIdxInPlay].cards = []deck_of_cards.Card{hand.cards[0]}
 
 	return nil
 }
@@ -204,34 +213,46 @@ func deal(g *Game) {
 }
 
 func end(g *Game, ai AI) {
-	for _, hand := range g.player {
+	fmt.Println("\nFinal hands\n")
+
+	for i, hand := range g.player {
 		pScore, pBlackJack := hand.Score(), isBlackJack(hand)
 		dScore, dBlackJack := g.dealer.Score(), isBlackJack(g.dealer)
 		winnings := hand.bet
 
+		var result string
 		switch {
 		case pBlackJack && dBlackJack:
 			winnings = 0
+			result = "Draw"
 		case dBlackJack:
 			winnings = -winnings
+			result = "Dealer BlackJack"
 		case pBlackJack:
 			winnings = int(float32(winnings) * g.opts.Payout)
+			result = "BlackJack"
 		case pScore > 21:
 			winnings = -winnings
+			result = "Busted"
 		case dScore > 21:
-			// win
+			result = "Dealer Busted"
 		case pScore > dScore:
-			// win
+			result = "Won"
 		case dScore > pScore:
 			winnings = -winnings
+			result = "Lost"
 		case dScore == pScore:
 			winnings = 0
+			result = "Draw"
 		}
+
+		if len(g.player) > 1 {
+			fmt.Printf("Hand %d:\n", i+1)
+		}
+		ai.Results(hand, g.dealer, result)
 
 		g.balance += winnings
 	}
-
-	ai.Results(g.player, g.dealer)
 }
 
 func draw(hand *Hand, deck *deck_of_cards.Deck) *Hand {

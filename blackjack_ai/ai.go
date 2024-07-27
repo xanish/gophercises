@@ -7,7 +7,7 @@ import (
 type AI interface {
 	Bet(shuffled bool) int
 	Play(hand Hand, dealer deck_of_cards.Card) Move
-	Results(hand []Hand, dealer Hand)
+	Results(hand Hand, dealer Hand, result string)
 }
 
 type Move func(*Game) error

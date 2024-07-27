@@ -18,6 +18,6 @@ func (ai DealerAI) Play(hand Hand, dealer deck_of_cards.Card) Move {
 	return Stand
 }
 
-func (ai DealerAI) Results(hand Hand, dealer Hand) {
+func (ai DealerAI) Results(hand Hand, dealer Hand, result string) {
 	// noop
 }

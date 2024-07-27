@@ -47,8 +47,8 @@ func (ai *PlayerAI) Play(hand Hand, dealer deck_of_cards.Card) Move {
 	}
 }
 
-func (ai *PlayerAI) Results(hand []Hand, dealer Hand) {
-	fmt.Println("\nFinal hands:")
+func (ai *PlayerAI) Results(hand Hand, dealer Hand, result string) {
 	fmt.Printf("Player's hand: %s\n", hand)
-	fmt.Printf("Dealer's hand: %s\n\n", dealer)
+	fmt.Printf("Dealer's hand: %s\n", dealer)
+	fmt.Printf("Result: %s\n\n", result)
 }
