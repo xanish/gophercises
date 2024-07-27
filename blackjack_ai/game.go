@@ -14,14 +14,18 @@ const (
 	stateHandOver
 )
 
+var (
+	errBust = errors.New("hand score exceeded 21")
+)
+
 type Game struct {
 	deck  deck_of_cards.Deck
 	state state
 	opts  Options
 
-	player  []Hand
-	bet     int
-	balance int
+	player               []Hand
+	currentHandIdxInPlay int
+	balance              int
 
 	dealer   Hand
 	dealerAI DealerAI
@@ -29,17 +33,12 @@ type Game struct {
 
 type Options struct {
 	Decks  int
-	Rounds int
 	Payout float32
 }
 
 func New(opts Options) Game {
 	if opts.Decks == 0 {
 		opts.Decks = 3
-	}
-
-	if opts.Rounds == 0 {
-		opts.Rounds = 100
 	}
 
 	if opts.Payout == 0.0 {
@@ -59,37 +58,44 @@ func New(opts Options) Game {
 }
 
 func (g *Game) Play(ai AI) int {
-	for i := 1; i <= g.opts.Rounds; i++ {
-		fmt.Printf("\nRound %d:\n", i)
+	bet(g, ai, false)
 
-		shuffled := false
-		if float32(g.deck.RemainingCards()) < float32(g.opts.Decks*52)*0.5 {
-			g.deck = deck_of_cards.NewDeck(deck_of_cards.Packs(g.opts.Decks), deck_of_cards.Shuffle)
-			shuffled = false
-		}
+	deal(g)
 
-		bet(g, ai, shuffled)
-
-		deal(g)
-
-		for g.state == statePlayerTurn {
-			move := ai.Play(g.player[0], g.dealer.cards[0])
-			err := move(g)
-
-			switch err {
-			case nil:
-			default:
-				panic(err)
-			}
-		}
-
-		for g.state == stateDealerTurn {
-			move := g.dealerAI.Play(g.dealer, g.dealer.cards[0])
-			_ = move(g)
-		}
-
+	if isBlackJack(g.dealer) {
 		end(g, ai)
 	}
+
+	for i := 0; i < len(g.player); i++ {
+		if float32(g.deck.RemainingCards()) < float32(g.opts.Decks*52)*0.5 {
+			g.deck = deck_of_cards.NewDeck(deck_of_cards.Packs(g.opts.Decks), deck_of_cards.Shuffle)
+			bet(g, ai, true)
+		}
+
+		for g.state == statePlayerTurn {
+			g.currentHandIdxInPlay = i
+			move := ai.Play(g.player[i], g.dealer.cards[0])
+			err := move(g)
+
+			for err != nil {
+				// go to the next split
+				if errors.Is(err, errBust) {
+					break
+				}
+
+				fmt.Printf("\nInvalid move: %v\n", err)
+				move = ai.Play(g.player[i], g.dealer.cards[0])
+				err = move(g)
+			}
+		}
+	}
+
+	for g.state == stateDealerTurn {
+		move := g.dealerAI.Play(g.dealer, g.dealer.cards[0])
+		_ = move(g)
+	}
+
+	end(g, ai)
 
 	return g.balance
 }
@@ -98,10 +104,10 @@ func (g *Game) String() string {
 	return fmt.Sprintf("Remaining Cards In Deck: %d\n state: %v\n Player's hand: %s\n Dealer's hand: %s\n", g.deck.RemainingCards(), g.state, g.player, g.dealer)
 }
 
-func (g *Game) currentPlayer() *Hand {
+func (g *Game) currentHandInPlay() *Hand {
 	switch g.state {
 	case statePlayerTurn:
-		return &g.player[0]
+		return &g.player[g.currentHandIdxInPlay]
 	case stateDealerTurn:
 		return &g.dealer
 	default:
@@ -115,28 +121,62 @@ func Hit(g *Game) error {
 		panic(err)
 	}
 
-	player := g.currentPlayer()
+	player := g.currentHandInPlay()
 	player.cards = append(player.cards, pick)
 
 	if player.Score() > 21 {
-		_ = Stand(g)
+		return errBust
 	}
 
 	return nil
 }
 
 func Stand(g *Game) error {
-	g.state++
+	if g.state == stateDealerTurn {
+		g.state++
+		return nil
+	}
+	if g.state == statePlayerTurn {
+		g.currentHandIdxInPlay++
+		if g.currentHandIdxInPlay >= len(g.player) {
+			g.state++
+		}
+		return nil
+	}
+
+	return errors.New("invalid game state")
+}
+
+func Split(g *Game) error {
+	hand := g.currentHandInPlay()
+	if len(hand.cards) != 2 {
+		return errors.New("you can only split with two cards in your hand")
+	}
+
+	if hand.cards[0].Rank != hand.cards[1].Rank {
+		return errors.New("both cards must have the same rank to split")
+	}
+
+	// make a new hand out of the second hard in player's hand
+	g.player = append(g.player, Hand{
+		cards: []deck_of_cards.Card{hand.cards[1]},
+		bet:   hand.bet,
+	})
+
+	// make the old hand have only the first card since we split the
+	// second one in new hand
+	hand.cards = hand.cards[:1]
 
 	return nil
 }
 
 func Double(g *Game) error {
-	if len(g.player[0].cards) != 2 {
+	hand := g.currentHandInPlay()
+	if len(hand.cards) != 2 {
 		return errors.New("can only double on a hand with 2 cards")
 	}
 
-	g.bet *= 2
+	hand.bet *= 2
 
 	_ = Hit(g)
 	_ = Stand(g)
@@ -144,17 +184,19 @@ func Double(g *Game) error {
 }
 
 func bet(g *Game, ai AI, shuffled bool) int {
-	g.bet = ai.Bet(shuffled)
+	hand := g.currentHandInPlay()
+	hand.bet = ai.Bet(shuffled)
 
-	return g.bet
+	return hand.bet
 }
 
 func deal(g *Game) {
-	g.player[0].cards = make([]deck_of_cards.Card, 0, 2)
+	hand := g.currentHandInPlay()
+	hand.cards = make([]deck_of_cards.Card, 0, 2)
 	g.dealer.cards = make([]deck_of_cards.Card, 0, 2)
 
 	for i := 0; i < 2; i++ {
-		draw(&g.player[0], &g.deck)
+		draw(hand, &g.deck)
 		draw(&g.dealer, &g.deck)
 	}
 
@@ -162,31 +204,34 @@ func deal(g *Game) {
 }
 
 func end(g *Game, ai AI) {
-	pScore, dScore := g.player[0].Score(), g.dealer.Score()
-	winnings := g.bet
+	for _, hand := range g.player {
+		pScore, pBlackJack := hand.Score(), isBlackJack(hand)
+		dScore, dBlackJack := g.dealer.Score(), isBlackJack(g.dealer)
+		winnings := hand.bet
 
-	var result string
-	switch {
-	case pScore > 21:
-		winnings *= -1
-		result = "You busted"
-	case dScore > 21:
-		winnings = int(float32(winnings) * g.opts.Payout)
-		result = "Dealer busted"
-	case pScore > dScore:
-		winnings = int(float32(winnings) * g.opts.Payout)
-		result = "You win!"
-	case dScore > pScore:
-		winnings *= -1
-		result = "You lose"
-	case dScore == pScore:
-		winnings *= 0
-		result = "Draw"
+		switch {
+		case pBlackJack && dBlackJack:
+			winnings = 0
+		case dBlackJack:
+			winnings = -winnings
+		case pBlackJack:
+			winnings = int(float32(winnings) * g.opts.Payout)
+		case pScore > 21:
+			winnings = -winnings
+		case dScore > 21:
+			// win
+		case pScore > dScore:
+			// win
+		case dScore > pScore:
+			winnings = -winnings
+		case dScore == pScore:
+			winnings = 0
+		}
+
+		g.balance += winnings
 	}
 
-	g.balance += winnings
-
-	ai.Results(g.player[0], g.dealer, result)
+	ai.Results(g.player, g.dealer)
 }
 
 func draw(hand *Hand, deck *deck_of_cards.Deck) *Hand {
@@ -198,4 +243,8 @@ func draw(hand *Hand, deck *deck_of_cards.Deck) *Hand {
 	hand.cards = append(hand.cards, pick)
 
 	return hand
+}
+
+func isBlackJack(hand Hand) bool {
+	return len(hand.cards) == 2 && hand.Score() == 21
 }

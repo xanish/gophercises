@@ -6,6 +6,6 @@ import (
 )
 
 func main() {
-	game := blackjack_ai.New(blackjack_ai.Options{Decks: 3, Rounds: 2})
-	fmt.Printf("Your Balance: %d", game.Play(blackjack_ai.NewPlayerAI()))
+	game := blackjack_ai.New(blackjack_ai.Options{Decks: 1})
+	fmt.Printf("Your Balance: %d\n", game.Play(blackjack_ai.NewPlayerAI()))
 }

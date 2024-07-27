@@ -9,6 +9,7 @@ import (
 
 type Hand struct {
 	cards []deck_of_cards.Card
+	bet   int
 }
 
 func (h Hand) Score() int {
