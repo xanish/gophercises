@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/xanish/gophercises/hacker_news"
@@ -53,9 +54,13 @@ func handler(numStories int, tpl *template.Template) http.HandlerFunc {
 var (
 	cache           []item
 	cacheExpiration time.Time
+	cacheMutex      sync.Mutex
 )
 
 func getCachedStories(numStories int) ([]item, error) {
+	cacheMutex.Lock()
+	defer cacheMutex.Unlock()
+
 	if time.Now().Sub(cacheExpiration) < 0 {
 		return cache, nil
 	}
@@ -65,7 +70,7 @@ func getCachedStories(numStories int) ([]item, error) {
 		return nil, err
 	}
 	cache = stories
-	cacheExpiration = time.Now().Add(1 * time.Second)
+	cacheExpiration = time.Now().Add(5 * time.Minute)
 
 	return cache, nil
 }
@@ -138,6 +143,7 @@ func parseHNItem(hnItem hacker_news.Item) item {
 	if err == nil {
 		ret.Host = strings.TrimPrefix(itemUrl.Hostname(), "www.")
 	}
+
 	return ret
 }
 
