@@ -17,7 +17,7 @@ Material can be found [here](https://courses.calhoun.io/courses/cor_gophercises)
 | 10 | Blackjack                 | [here](./blackjack/README.md)               | Todo  |
 | 11 | Blackjack AI              | [here](./blackjack_ai/README.md)            | Todo  |
 | 12 | File Renaming Tool        | [here](./file_renaming_tool/README.md)      | Todo  |
-| 13 | Quiet Hacker News         | [here](./hacker_news/README.md)             | Todo  |
+| 13 | Quiet Hacker News         | [here](./hacker_news/README.md)             | Done  |
 
 ## Checking Test Coverage
 

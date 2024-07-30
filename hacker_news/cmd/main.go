@@ -118,25 +118,19 @@ func getTopStories(numStories int) ([]item, error) {
 }
 
 func getStories(ids []int) []item {
-	type result struct {
-		idx  int
-		item item
-		err  error
+	jobsCh := make(chan int, len(ids))
+	resultCh := make(chan jobResult)
+
+	// start a pool with 6 workers
+	for i := 0; i < 6; i++ {
+		go spawnWorker(jobsCh, resultCh, i)
 	}
 
-	resultCh := make(chan result)
-	for i := 0; i < len(ids); i++ {
-		go func(idx, id int) {
-			var client hacker_news.Client
-			hnItem, err := client.GetItem(id)
-			if err != nil {
-				resultCh <- result{idx: idx, err: err}
-			}
-			resultCh <- result{idx: idx, item: parseHNItem(hnItem)}
-		}(i, ids[i])
+	for _, storyId := range ids {
+		jobsCh <- storyId
 	}
 
-	var results []result
+	var results []jobResult
 	for i := 0; i < len(ids); i++ {
 		results = append(results, <-resultCh)
 	}
@@ -155,6 +149,23 @@ func getStories(ids []int) []item {
 	}
 
 	return stories
+}
+
+func spawnWorker(jobs <-chan int, results chan<- jobResult, workerId int) {
+	i := 0
+	for storyId := range jobs {
+		fmt.Printf("worker %d starting story %d\n", workerId, storyId)
+		go func(idx, id int) {
+			var client hacker_news.Client
+			hnItem, err := client.GetItem(id)
+			if err != nil {
+				results <- jobResult{idx: idx, err: err}
+			}
+			results <- jobResult{idx: idx, item: parseHNItem(hnItem)}
+		}(i, storyId)
+
+		i++
+	}
 }
 
 func isStoryLink(item item) bool {
@@ -180,4 +191,10 @@ type item struct {
 type templateData struct {
 	Stories []item
 	Time    time.Duration
+}
+
+type jobResult struct {
+	idx  int
+	item item
+	err  error
 }
