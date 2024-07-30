@@ -1,4 +1,4 @@
-// Package hn implements a really basic Hacker News client
+// Package hacker_news implements a really basic Hacker News client
 package hacker_news
 
 import (
