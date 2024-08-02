@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"runtime/debug"
 )
@@ -57,6 +59,30 @@ func (rw *responseWriter) Write(b []byte) (int, error) {
 
 func (rw *responseWriter) WriteHeader(statusCode int) {
 	rw.status = statusCode
+}
+
+func (rw *responseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	// Try to check if response writer supports Hijacker interface.
+	// Even though we are implementing Hijacker but the underlying response writer doesn't.
+	hijacker, ok := rw.ResponseWriter.(http.Hijacker)
+	if !ok {
+		return nil, nil, fmt.Errorf("the ResponseWriter does not support the Hijacker interface")
+	}
+
+	return hijacker.Hijack()
+}
+
+func (rw *responseWriter) Flush() {
+	// Try to check if response writer supports Flusher interface.
+	// Even though we are implementing Flusher but the underlying response writer doesn't.
+	flusher, ok := rw.ResponseWriter.(http.Flusher)
+	if !ok {
+		// The client doesn't support flush, so, we should just send the entire data in one go.
+		// In some cases where it may be mandatory for flush to be supported we might want to throw an error.
+		return
+	}
+
+	flusher.Flush()
 }
 
 func (rw *responseWriter) flush() error {
