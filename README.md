@@ -20,6 +20,7 @@ Material can be found [here](https://courses.calhoun.io/courses/cor_gophercises)
 | 13 | Quiet Hacker News              | [here](./hacker_news/README.md)             | Done  |
 | 14 | Recover Middleware             | [here](./recover_middleware/README.md)      | Todo  |
 | 15 | Development Recover Middleware | [here](./dev_recover_middleware/README.md)  | Todo  |
+| 17 | Secrets CLI & API              | [here](./secrets_cli_api/README.md)         | Todo  |
 
 ## Checking Test Coverage
 
